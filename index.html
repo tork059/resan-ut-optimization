@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Оптимизация регламентных заданий 1С:УТ</title>
+<meta name="description" content="Проект оптимизации регламентных и фоновых заданий рабочей базы 1С:УТ: суточная карта нагрузки, реестр заданий, волны работ, дедлайны и контрольные замеры.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --brand:#4a4fb5;
+  --brand-ink:#333a8f;
+  --brand-soft:#eceefb;
+  --bg:#f4f5f9;
+  --surface:#ffffff;
+  --surface-2:#fafbfd;
+  --text:#191b27;
+  --muted:#5c6178;
+  --line:#dcdfeb;
+  --line-strong:#c3c8dc;
+  --ok:#2c7a51; --ok-soft:#e4f2ea;
+  --warn:#9c6510; --warn-soft:#fbf0db;
+  --crit:#b03828; --crit-soft:#f9e5e1;
+  --idle:#697089; --idle-soft:#edeff5;
+  --heat-1:#dfe3f7; --heat-2:#b6bdf0; --heat-3:#8f7fd8; --heat-4:#c4584a;
+  --font:"Golos Text","Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"JetBrains Mono",Consolas,"Courier New",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --brand:#8a8fe6; --brand-ink:#b3b7f2; --brand-soft:#1d2044;
+    --bg:#0d0e16; --surface:#141724; --surface-2:#191d2c; --text:#e6e8f2; --muted:#9ba2bb;
+    --line:#282d42; --line-strong:#3a4159;
+    --ok:#68bd8e; --ok-soft:#14261d; --warn:#dfa64c; --warn-soft:#2b2312;
+    --crit:#e8877a; --crit-soft:#301814; --idle:#98a0b8; --idle-soft:#1b1f2e;
+    --heat-1:#242a4d; --heat-2:#3a4285; --heat-3:#6a5cb8; --heat-4:#b8544a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --brand:#8a8fe6; --brand-ink:#b3b7f2; --brand-soft:#1d2044;
+  --bg:#0d0e16; --surface:#141724; --surface-2:#191d2c; --text:#e6e8f2; --muted:#9ba2bb;
+  --line:#282d42; --line-strong:#3a4159;
+  --ok:#68bd8e; --ok-soft:#14261d; --warn:#dfa64c; --warn-soft:#2b2312;
+  --crit:#e8877a; --crit-soft:#301814; --idle:#98a0b8; --idle-soft:#1b1f2e;
+  --heat-1:#242a4d; --heat-2:#3a4285; --heat-3:#6a5cb8; --heat-4:#b8544a;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.55;margin:0}
+a{color:var(--brand)}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0;max-width:74ch}
+code{font-family:var(--mono);font-size:.88em;background:var(--brand-soft);color:var(--brand-ink);padding:1px 5px;border-radius:3px}
+
+/* ── шапка ─────────────────────────────────────────── */
+.top{background:var(--brand);color:#fff;position:sticky;top:0;z-index:30}
+.top-in{max-width:1280px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;letter-spacing:.16em}
+.logo i{width:8px;height:18px;background:#fff;display:inline-block;box-shadow:12px 0 0 rgba(255,255,255,.55),24px 0 0 rgba(255,255,255,.25)}
+.top .meta{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;opacity:.94}
+.top .meta b{font-variant-numeric:tabular-nums}
+.themebtn{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);font:inherit;font-size:12px;padding:4px 10px;border-radius:3px;cursor:pointer}
+.themebtn:hover{background:rgba(255,255,255,.26)}
+
+.wrap{max-width:1280px;margin:0 auto;padding:26px 16px 72px;display:grid;grid-template-columns:212px minmax(0,1fr);gap:36px}
+nav.toc{position:sticky;top:76px;align-self:start;font-size:14px}
+nav.toc p{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 10px;font-weight:600}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:1px;border-left:2px solid var(--line)}
+nav.toc a{display:block;padding:6px 12px;color:var(--text);text-decoration:none;margin-left:-2px;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{border-left-color:var(--brand);color:var(--brand);outline:none;background:var(--brand-soft)}
+nav.toc a .n{font-family:var(--mono);font-size:11px;color:var(--muted);margin-right:7px}
+main{min-width:0;display:grid;gap:42px}
+
+/* ── герой ─────────────────────────────────────────── */
+.hero{display:grid;gap:16px;border-bottom:1px solid var(--line);padding-bottom:26px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.13em;color:var(--brand);font-weight:700}
+h1{font-size:33px;line-height:1.14;font-weight:700;max-width:24ch}
+.lead{font-size:17px;color:var(--muted);max-width:70ch}
+.pass{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.pass div{background:var(--surface);padding:11px 13px}
+.pass dt{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.pass dd{margin:4px 0 0;font-weight:600;font-size:13.5px}
+
+/* ── секции ────────────────────────────────────────── */
+section{display:grid;gap:16px;scroll-margin-top:72px}
+.sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;justify-content:space-between;border-bottom:2px solid var(--brand);padding-bottom:7px}
+.sh h2{font-size:21px;font-weight:700}
+.sh .num{font-family:var(--mono);color:var(--brand);font-size:13px;margin-right:9px;font-weight:700}
+.upd{font-size:12px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.panel{background:var(--surface);border:1px solid var(--line);padding:16px 18px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+ul.clean{margin:0;padding-left:19px;display:grid;gap:6px}
+.note{border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;font-size:14px}
+.note.info{border-left-color:var(--brand);background:var(--brand-soft)}
+.note.crit{border-left-color:var(--crit);background:var(--crit-soft)}
+.sub{font-size:13.5px;color:var(--muted)}
+
+/* ── табло ─────────────────────────────────────────── */
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);padding:13px 15px;display:grid;gap:5px;align-content:start;border-top:3px solid var(--brand)}
+.kpi.alert{border-top-color:var(--crit)}
+.kpi.good{border-top-color:var(--ok)}
+.kpi dt{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.kpi dd{margin:0;font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1;font-family:var(--mono)}
+.kpi dd small{font-size:13px;font-weight:500;color:var(--muted);font-family:var(--font)}
+.kpi .hint{font-size:12px;color:var(--muted);line-height:1.35}
+
+/* ── суточная карта ────────────────────────────────── */
+.ctrls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line-strong);background:var(--surface);overflow:hidden}
+.seg button{font:inherit;font-size:13px;padding:6px 13px;background:transparent;color:var(--text);border:0;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--brand);color:#fff;font-weight:600}
+.heatwrap{overflow-x:auto;border:1px solid var(--line);background:var(--surface)}
+.heat{min-width:940px;font-size:12px}
+.hrow{display:grid;grid-template-columns:238px repeat(24,minmax(0,1fr));align-items:stretch;border-top:1px solid var(--line)}
+.hrow:first-child{border-top:0}
+.hrow.head{background:var(--surface-2);position:sticky;top:0;z-index:2}
+.hrow.total{border-top:2px solid var(--line-strong);background:var(--surface-2);font-weight:600}
+.hlab{padding:7px 11px;line-height:1.3;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:2px;justify-content:center}
+.hlab b{font-weight:600;font-size:12.5px}
+.hlab span{font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.hcell{border-left:1px solid var(--line);min-height:30px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--muted);position:relative}
+.hrow.head .hcell{padding:6px 0;font-weight:600;color:var(--muted)}
+.hcell.win{box-shadow:inset 0 0 0 1px var(--brand)}
+.hrow.head .hcell.win{background:var(--brand-soft);color:var(--brand-ink)}
+.hcell .v{position:absolute;inset:2px;display:flex;align-items:center;justify-content:center;font-size:9.5px;color:var(--text)}
+.l1{background:var(--heat-1)} .l2{background:var(--heat-2)} .l3{background:var(--heat-3);color:#fff} .l4{background:var(--heat-4);color:#fff}
+.l3 .v,.l4 .v{color:#fff}
+.hrow.risk .hlab b{color:var(--crit)}
+.hcell.dash{background:repeating-linear-gradient(45deg,var(--crit-soft),var(--crit-soft) 4px,transparent 4px,transparent 8px)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);align-items:center}
+.sw{display:inline-block;width:14px;height:12px;vertical-align:-1px;margin-right:5px;border:1px solid var(--line-strong)}
+
+/* ── таблицы ───────────────────────────────────────── */
+.tbl{overflow-x:auto;border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;background:var(--surface-2);padding:9px 11px;white-space:nowrap;border-bottom:1px solid var(--line-strong)}
+td{padding:9px 11px;border-top:1px solid var(--line);vertical-align:top}
+tr.hidden{display:none}
+td.id{font-family:var(--mono);color:var(--brand);white-space:nowrap;font-weight:500}
+td.nw{white-space:nowrap}
+td.num{text-align:right;font-family:var(--mono);white-space:nowrap}
+td.sched{font-family:var(--mono);font-size:11.5px;line-height:1.4}
+.arrow-to{color:var(--brand);font-weight:700}
+.pill{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;white-space:nowrap;border:1px solid transparent;border-radius:2px}
+.s-work{background:var(--brand-soft);color:var(--brand-ink);border-color:var(--brand)}
+.s-ok{background:var(--ok-soft);color:var(--ok)}
+.s-wait{background:var(--warn-soft);color:var(--warn)}
+.s-idle{background:var(--idle-soft);color:var(--idle)}
+.s-crit{background:var(--crit-soft);color:var(--crit)}
+.p-crit{color:var(--crit);font-weight:700}
+.p-high{color:var(--warn);font-weight:700}
+.p-mid{color:var(--muted);font-weight:600}
+
+/* ── волны и задачи ────────────────────────────────── */
+.waves{display:grid;gap:12px}
+.wave{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--line-strong)}
+.wave.active{border-left-color:var(--brand)}
+.wave.done{border-left-color:var(--ok)}
+.whead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--line)}
+.whead h3{font-size:16px;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.whead h3 .c{font-family:var(--mono);font-size:12px;color:var(--brand);font-weight:700}
+.wmeta{display:flex;gap:14px;align-items:center;font-size:12px;color:var(--muted);flex-wrap:wrap;justify-content:flex-end}
+.prog{width:120px;height:6px;background:var(--idle-soft);border:1px solid var(--line)}
+.prog b{display:block;height:100%;background:var(--brand)}
+.wave.done .prog b{background:var(--ok)}
+.wbody{padding:4px 0}
+details.task{border-top:1px solid var(--line)}
+details.task:first-child{border-top:0}
+details.task>summary{padding:10px 16px;cursor:pointer;display:grid;grid-template-columns:52px minmax(0,1fr) auto auto;gap:12px;align-items:baseline;list-style:none}
+details.task>summary::-webkit-details-marker{display:none}
+details.task>summary:hover{background:var(--surface-2)}
+details.task>summary .tid{font-family:var(--mono);font-size:12px;color:var(--brand);font-weight:700}
+details.task>summary .tt{font-size:14px}
+details.task>summary .tt em{font-style:normal;color:var(--muted);font-size:12.5px;display:block;margin-top:2px}
+details.task>summary .dl{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+details.task>summary .dl.hot{color:var(--crit);font-weight:700}
+details.task[open]>summary{background:var(--brand-soft)}
+.tdetail{padding:4px 16px 16px 68px;display:grid;gap:12px}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:13.5px}
+.checks li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;align-items:baseline}
+.checks li i{font-style:normal;font-family:var(--mono);color:var(--muted)}
+.checks li.done i{color:var(--ok)}
+.checks li.done{color:var(--muted);text-decoration:line-through}
+.fields{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;font-size:13px;align-items:baseline}
+.fields dt{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;white-space:nowrap}
+.fields dd{margin:0}
+
+/* ── схема окна ────────────────────────────────────── */
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:stretch}
+.node{background:var(--surface);border:1px solid var(--line);padding:12px 14px;display:grid;gap:4px;align-content:start}
+.node b{font-size:14px}
+.node small{color:var(--muted);font-size:12px;line-height:1.4}
+.node.hub{border:2px solid var(--brand);background:var(--brand-soft);padding:11px 13px}
+.arr{display:flex;align-items:center;justify-content:center;color:var(--brand);font-weight:700;font-size:19px}
+
+footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;display:grid;gap:4px}
+
+@media (max-width:1040px){
+  .wrap{grid-template-columns:1fr;gap:22px}
+  nav.toc{position:static}
+  nav.toc ol{grid-template-columns:repeat(2,minmax(0,1fr));border-left:0}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pass{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:680px){
+  h1{font-size:25px}
+  .grid2,.kpis,.flow{grid-template-columns:1fr}
+  .arr{transform:rotate(90deg)}
+  .whead{grid-template-columns:1fr}
+  .wmeta{justify-content:flex-start}
+  details.task>summary{grid-template-columns:44px minmax(0,1fr);row-gap:4px}
+  details.task>summary .dl,details.task>summary .st{grid-column:2}
+  .tdetail{padding-left:16px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+
+<div class="top">
+  <div class="top-in">
+    <div class="logo"><i></i>РЕСАН · ОПТИМИЗАЦИЯ 1С</div>
+    <div class="meta">
+      <span>Версия <b>0.1</b></span>
+      <span>Обновлено <b>28.09.2026</b></span>
+      <span>Волна <b>1 из 5</b></span>
+      <span>Статус: <b>Подготовка</b></span>
+    </div>
+    <button class="themebtn" id="themebtn" type="button">Тема</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="toc" aria-label="Содержание">
+    <p>Содержание</p>
+    <ol>
+      <li><a href="#tablo"><span class="n">01</span>Табло</a></li>
+      <li><a href="#sutki"><span class="n">02</span>Карта суток</a></li>
+      <li><a href="#target"><span class="n">03</span>Целевое окно</a></li>
+      <li><a href="#reestr"><span class="n">04</span>Реестр заданий</a></li>
+      <li><a href="#waves"><span class="n">05</span>Волны и задачи</a></li>
+      <li><a href="#blockers"><span class="n">06</span>Блокеры</a></li>
+      <li><a href="#zamery"><span class="n">07</span>Замеры</a></li>
+      <li><a href="#riski"><span class="n">08</span>Риски</a></li>
+      <li><a href="#reshenia"><span class="n">09</span>Решения</a></li>
+      <li><a href="#versii"><span class="n">10</span>Версии</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Проект оптимизации · рабочая база 1С:Управление торговлей</div>
+      <h1>Оптимизация регламентных и фоновых заданий</h1>
+      <p class="lead">Проект снижает нагрузку регламентных заданий на рабочую базу в те часы, когда в ней работают люди. Первая задача — освободить вечернее окно 15:00–21:00 под новое регламентное задание. Работа идёт волнами: сначала обратимые правки расписаний, затем рефакторинг алгоритмов обменов.</p>
+      <dl class="pass">
+        <div><dt>Основание</dt><dd>Аудит регл. и фоновых заданий, v3</dd></div>
+        <div><dt>Период данных аудита</dt><dd>16.08 – 16.09.2026 (32 дня)</dd></div>
+        <div><dt>Рабочий день</dt><dd>9:00 – 19:00, в загруженные дни до 20:00</dd></div>
+        <div><dt>Текущая волна</dt><dd>В1. Вечернее окно 15:00–21:00</dd></div>
+        <div><dt>Период проекта</dt><dd>09.2026 – 04.2027</dd></div>
+        <div><dt>Руководитель проекта</dt><dd>уточняется</dd></div>
+        <div><dt>Администратор 1С</dt><dd>уточняется</dd></div>
+        <div><dt>Ближайшая веха</dt><dd>27.10 — окно передано под новое РЗ</dd></div>
+      </dl>
+      <div class="grid2">
+        <div class="panel">
+          <h3>Цели</h3>
+          <ul class="clean" style="margin-top:8px">
+            <li>Окно 15:00–21:00 освобождено под новое регламентное задание, плотность в нём не выше 0,25 ч машинного времени на час календарного.</li>
+            <li>Полные выгрузки каталога заменены дельта-обменом: один прогон перестаёт занимать часы.</li>
+            <li>У каждого тяжёлого задания есть ограничение длительности, и его не нужно обрывать вручную.</li>
+            <li>Реестр заданий отражает факт: нет «зомби», мёртвых заданий и заданий без владельца.</li>
+            <li>Эффект подтверждён замером ожиданий на блокировках, а не жалобами и их отсутствием.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Границы и принципы</h3>
+          <ul class="clean" style="margin-top:8px">
+            <li>Ночное окно 20:00–9:00 не является резервом: оно загружено плотнее дневного (1,14 против 0,98). Перенос в ночь требует её пересборки.</li>
+            <li>Сначала расписания, потом код: обратимые правления идут первой волной, рефакторинг алгоритмов — последующими.</li>
+            <li>Изменение частоты и окон выгрузок затрагивает актуальность данных на сайтах — согласуется с бизнесом до правки.</li>
+            <li>Каждая правка проходит контрольный замер; без замера задача не считается закрытой.</li>
+            <li>Состав функциональности обменов не меняется: меняются момент запуска и объём передаваемых данных.</li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- 01 ТАБЛО -->
+    <section id="tablo">
+      <div class="sh"><h2><span class="num">01</span>Табло проекта</h2><span class="upd">обновлено 28.09.2026</span></div>
+      <p>Цифры посчитаны по расписаниям всех 98 заданий (выгрузка от 21.09.2026) и средним длительностям прогонов из журнала за 32 дня. Значения по окну пересчитываются картой суток в разделе 02.</p>
+      <dl class="kpis">
+        <div class="kpi alert"><dt>Окно 15:00–21:00 сейчас</dt><dd id="k-now">5,5<small> ч/сутки</small></dd><div class="hint">Машинное время заданий внутри окна. Плотность <b id="k-dens">0,92</b> ч на час календарного: один процесс кластера занят почти непрерывно.</div></div>
+        <div class="kpi good"><dt>После волны 1</dt><dd id="k-after">1,3<small> ч/сутки</small></dd><div class="hint">Расчётный остаток при выполнении задач В1-1 … В1-7. Плотность <b id="k-dens2">0,21</b>.</div></div>
+        <div class="kpi"><dt>Высвобождается</dt><dd id="k-free">4,2<small> ч/сутки</small></dd><div class="hint">Около <b id="k-free32">135</b> ч за 32 дня, <b id="k-freepct">76</b>&nbsp;% нагрузки окна. Без изменения кода обменов.</div></div>
+        <div class="kpi alert"><dt>Блокеров открыто</dt><dd>4<small> из 7 задач</small></dd><div class="hint">Задачи В1-1, В1-2, В1-4 и приёмка окна не двигаются без ответов Б-01 – Б-03.</div></div>
+      </dl>
+      <div class="grid2">
+        <div class="panel">
+          <h3>Откуда берётся нагрузка окна</h3>
+          <p class="sub" style="margin-top:8px">Две трети окна создают два задания. Оба — не ночные, хотя такими считались до разбора расписаний.</p>
+          <div class="tbl" style="margin-top:10px">
+            <table>
+              <thead><tr><th>Задание</th><th style="text-align:right">ч/сутки</th><th style="text-align:right">Доля окна</th></tr></thead>
+              <tbody>
+                <tr><td>Выгрузка на сайт Битрикс (полный каталог)</td><td class="num">2,02</td><td class="num">37&nbsp;%</td></tr>
+                <tr><td>Выгрузка остатков на сайт</td><td class="num">1,22</td><td class="num">22&nbsp;%</td></tr>
+                <tr><td>revitech_goods_full</td><td class="num">0,75</td><td class="num">14&nbsp;%</td></tr>
+                <tr><td>Обмены заказами, буфер сообщений, событийные</td><td class="num">0,72</td><td class="num">13&nbsp;%</td></tr>
+                <tr><td>Выгрузка данных в ВМС</td><td class="num">0,31</td><td class="num">6&nbsp;%</td></tr>
+                <tr><td>Выгрузка на сайт Insales (полный каталог)</td><td class="num">0,24</td><td class="num">4&nbsp;%</td></tr>
+                <tr><td>Рассылка по эл. почте, revitech_prices_change</td><td class="num">0,21</td><td class="num">4&nbsp;%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>Фон базы за 32 дня</h3>
+          <dl class="fields" style="margin-top:10px">
+            <dt>Заданий</dt><dd>98 в реестре: 45 активных штатных, 43 подтверждённо мёртвых, 6 «зомби», 4 активных без запусков</dd>
+            <dt>Машинное время</dt><dd>819,7 ч — из них 42,0&nbsp;% в рабочем окне 9:00–20:00, 58,0&nbsp;% ночью</dd>
+            <dt>Запусков</dt><dd>193 049, из них 70,3&nbsp;% — опрос ВМС каждые 20 секунд при 4,9&nbsp;% машинного времени</dd>
+            <dt>Ошибок</dt><dd>438 (0,23&nbsp;%), плюс 54 отмены — преимущественно ручные обрывы resanopt_goods_full</dd>
+            <dt>Health score</dt><dd>51 / 100 — критическая зона по чистоте реестра и эффективности расписаний</dd>
+          </dl>
+          <div class="note info" style="margin-top:12px">Ключевое расхождение аудита: рейтинг по общему машинному времени и рейтинг по рабочему окну дают разные списки работ. Под задачу «ускорить рабочий день» первым идёт не resanopt_goods_full (212,4 ч, но полностью ночью), а дневные серии полных выгрузок каталога.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 КАРТА СУТОК -->
+    <section id="sutki">
+      <div class="sh"><h2><span class="num">02</span>Карта суток</h2><span class="upd">обновлено 28.09.2026</span></div>
+      <p>Каждая клетка — часы машинного времени, которые задание занимает в этом часе суток в среднем за сутки. Значения получены раскладкой длительности прогона по часам от момента старта по расписанию; круглосуточные задания разложены равномерно. Целевое окно 15:00–21:00 обведено рамкой.</p>
+      <div class="ctrls">
+        <div class="seg" role="group" aria-label="Сценарий">
+          <button type="button" id="btn-now" aria-pressed="true">Сейчас</button>
+          <button type="button" id="btn-after" aria-pressed="false">После волны 1</button>
+        </div>
+        <span class="sub">Итог по окну: <b id="sum-win">5,5</b> ч/сутки · плотность <b id="sum-dens">0,92</b></span>
+      </div>
+      <div class="heatwrap"><div class="heat" id="heat" role="img" aria-label="Карта загрузки регламентных заданий по часам суток"></div></div>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--heat-1)"></span>до 0,25 ч</span>
+        <span><span class="sw" style="background:var(--heat-2)"></span>0,25–0,60 ч</span>
+        <span><span class="sw" style="background:var(--heat-3)"></span>0,60–1,00 ч</span>
+        <span><span class="sw" style="background:var(--heat-4)"></span>более 1,00 ч</span>
+        <span><span class="sw" style="background:repeating-linear-gradient(45deg,var(--crit-soft),var(--crit-soft) 4px,transparent 4px,transparent 8px)"></span>риск: задание может вернуться в окно</span>
+      </div>
+      <div class="note">Две последние строки карты — не текущая нагрузка, а риск. Оба задания числятся в реестре отключёнными, но фактически выполнялись: revitech_goods_pictures отработало 20,4 ч одним прогоном 15.09 со старта в 11:20, resanopt_goods_change до 26.08 стартовало в 8:00, 13:00 и 18:00 по 2,46 ч. Повтор любого из них съедает окно целиком.</div>
+    </section>
+
+    <!-- 03 ЦЕЛЕВОЕ ОКНО -->
+    <section id="target">
+      <div class="sh"><h2><span class="num">03</span>Целевая раскладка суток</h2><span class="upd">обновлено 28.09.2026</span></div>
+      <p>Смысл волны 1 — собрать сутки заново так, чтобы вечернее окно стало свободным участком, а не остатком от чужих расписаний.</p>
+      <div class="flow">
+        <div class="node"><b>9:00 – 15:00 · актуализация</b><small>Обе полные выгрузки каталога (Битрикс, Insales) укладываются в два прогона до 14:00. revitech_prices_change работает до 15:00. Остатки и ВМС — в обычном режиме.</small></div>
+        <div class="arr">→</div>
+        <div class="node hub"><b>15:00 – 21:00 · новое РЗ</b><small>Остаётся только фоновый минимум: обмены заказами, разряжённые остатки, ВМС на 120 с. Плотность не выше 0,25. Свободный ресурс — под новое регламентное задание.</small></div>
+        <div class="arr">→</div>
+        <div class="node"><b>21:00 – 9:00 · ночь</b><small>Диадок 21:30, resanopt_goods_full 22:00, sanmixpro 22:00, revitech_goods_full после 22:30. Окно требует пересборки: плотность здесь уже выше дневной.</small></div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <h3>Что меняется расписанием (волна 1)</h3>
+          <ul class="clean" style="margin-top:8px">
+            <li>Дневные серии Битрикса и Insales обрезаются по 14:00 — уходят вечерние старты 17:30 и 17:20.</li>
+            <li>revitech_goods_full уходит со старта 20:00 за 22:30 — за пределы продлённого рабочего дня.</li>
+            <li>Остатки получают окно: в 15:00–21:00 интервал разряжается со 180 до 600 секунд.</li>
+            <li>ВМС переводится с 20 на 120 секунд — минус около 1 080 сессий планировщика за окно.</li>
+            <li>revitech_prices_change сужается с 7:00–22:00 до 7:00–15:00, пока объём интеграции невелик.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Что остаётся рефакторингом (волны 2–3)</h3>
+          <ul class="clean" style="margin-top:8px">
+            <li>Полная выгрузка каталога вместо дельты — у Битрикса, Insales и resanopt_goods_full.</li>
+            <li>Опрос ВМС каждые 20 секунд вместо событийной модели.</li>
+            <li>Отсутствие ограничения длительности: функцию таймаута сейчас выполняет администратор вручную.</li>
+            <li>Три поколения механизмов обмена с сайтом, сосуществующие в базе.</li>
+          </ul>
+          <div class="note crit" style="margin-top:12px">Волна 1 освобождает окно по часам. Если новое задание пишет те же объекты, что остатки или каталог, разгрузка по часам не снимет конкуренцию за блокировки — нужен профиль нового задания (Б-03).</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 РЕЕСТР -->
+    <section id="reestr">
+      <div class="sh"><h2><span class="num">04</span>Реестр заданий проекта</h2><span class="upd">обновлено 28.09.2026</span></div>
+      <p>Задания, которые проект трогает или обязан учесть. «Расписание сейчас» — по выгрузке от 21.09.2026, «целевое» — предложение проекта.</p>
+      <div class="ctrls">
+        <div class="seg" role="group" aria-label="Фильтр реестра">
+          <button type="button" class="f" data-f="all" aria-pressed="true">Все</button>
+          <button type="button" class="f" data-f="win" aria-pressed="false">В окне 15–21</button>
+          <button type="button" class="f" data-f="risk" aria-pressed="false">Риск возврата</button>
+          <button type="button" class="f" data-f="later" aria-pressed="false">Волны 2–5</button>
+        </div>
+        <span class="sub"><b id="f-count">17</b> заданий показано</span>
+      </div>
+      <div class="tbl">
+        <table id="reg">
+          <thead><tr><th>Задание</th><th>Расписание сейчас <span class="arrow-to">→</span> целевое</th><th style="text-align:right">ч/сут<br>в окне</th><th>Задача</th><th>Статус</th></tr></thead>
+          <tbody>
+            <tr data-g="win"><td><b>Выгрузка на сайт Битрикс</b><br><span class="sub">полный каталог, 177,0 ч за 32 дня</span></td><td class="sched">1:00–6:00 один раз + 9:10–19:00 каждые 10 000 с <span class="arrow-to">→</span> 1:00–6:00 один раз + 9:00–14:00 каждые 10 000 с</td><td class="num">2,02</td><td class="id">В1-1</td><td><span class="pill s-wait">Ждёт Б-01</span></td></tr>
+            <tr data-g="win"><td><b>Выгрузка остатков на сайт</b><br><span class="sub">156,8 ч, 31 ошибка, 23 дня из 32</span></td><td class="sched">каждые 180 с, повтор через 600 с, окна нет <span class="arrow-to">→</span> 180 с вне окна, 600 с в 15:00–21:00</td><td class="num">1,22</td><td class="id">В1-4</td><td><span class="pill s-wait">Ждёт Б-02</span></td></tr>
+            <tr data-g="win"><td><b>revitech_goods_full</b><br><span class="sub">1,5 ч, включено после 16.09</span></td><td class="sched">с 20:00:00 один раз в день <span class="arrow-to">→</span> с 22:30:00 один раз в день</td><td class="num">0,75</td><td class="id">В1-3</td><td><span class="pill s-work">Готово к правке</span></td></tr>
+            <tr data-g="win"><td><b>Выгрузка данных в ВМС</b><br><span class="sub">40,0 ч, 135 673 запуска, 70,3 % всех запусков базы</span></td><td class="sched">каждые 20 с, окна нет <span class="arrow-to">→</span> каждые 120 с</td><td class="num">0,31</td><td class="id">В1-5</td><td><span class="pill s-work">Готово к правке</span></td></tr>
+            <tr data-g="win"><td><b>Выгрузка на сайт Insales</b><br><span class="sub">полный каталог, 38,2 ч</span></td><td class="sched">1:00–6:00 один раз + 9:00–19:00 каждые 10 000 с <span class="arrow-to">→</span> 1:00–6:00 один раз + 9:00–14:00 каждые 10 000 с</td><td class="num">0,24</td><td class="id">В1-2</td><td><span class="pill s-wait">Ждёт Б-01</span></td></tr>
+            <tr data-g="win"><td><b>revitech_prices_change</b><br><span class="sub">пока малый объём, растёт с интеграцией</span></td><td class="sched">7:00–22:00 каждые 3 600 с <span class="arrow-to">→</span> 7:00–15:00 каждые 3 600 с</td><td class="num">0,13</td><td class="id">В1-6</td><td><span class="pill s-work">Готово к правке</span></td></tr>
+            <tr data-g="win"><td><b>INSALES — ЗАКАЗЫ, SANMIX.PRO — ЗАКАЗЫ, resanopt_orders_change, resanopt_contragents_change</b><br><span class="sub">фоновый минимум окна</span></td><td class="sched">каждые 300 с, окна нет <span class="arrow-to">→</span> без изменений</td><td class="num">0,60</td><td class="id">—</td><td><span class="pill s-ok">Оставить</span></td></tr>
+            <tr data-g="win"><td><b>Отправка электронных сообщений из буфера</b></td><td class="sched">7:00–21:00 каждые 700 с <span class="arrow-to">→</span> без изменений</td><td class="num">0,12</td><td class="id">—</td><td><span class="pill s-ok">Оставить</span></td></tr>
+            <tr data-g="win"><td><b>Рассылка по электронной почте</b></td><td class="sched">пн–пт 9:00–18:00 каждые 900 с <span class="arrow-to">→</span> без изменений</td><td class="num">0,11</td><td class="id">—</td><td><span class="pill s-ok">Оставить</span></td></tr>
+            <tr data-g="risk"><td><b>revitech_goods_pictures</b><br><span class="sub">20,4 ч одним прогоном 15.09, в реестре отключено</span></td><td class="sched">один день; с 11:20:00 <span class="arrow-to">→</span> реальный останов либо ночное окно + ограничение длительности</td><td class="num">0</td><td class="id">В1-7</td><td><span class="pill s-crit">Блокер окна</span></td></tr>
+            <tr data-g="risk"><td><b>resanopt_goods_change</b><br><span class="sub">2,46 ч на прогон, встало 26.08, расписание живое</span></td><td class="sched">с 8:00:00 каждые 18 000 с — старты 8:00, 13:00, 18:00 <span class="arrow-to">→</span> сетка вне 15:00–21:00 до реактивации</td><td class="num">0</td><td class="id">В1-7</td><td><span class="pill s-crit">Блокер окна</span></td></tr>
+            <tr data-g="risk"><td><b>Обновление статуса заявки СМР</b>, <b>Выгрузка данных на биржу товаров</b> и ещё два задания<br><span class="sub">тип расписания «один день» — фактически не запускаются</span></td><td class="sched">один день; каждые 3 600 с / 600 с <span class="arrow-to">→</span> «каждый день» одновременно с заданием окна вне 15:00–21:00</td><td class="num">0</td><td class="id">В1-7</td><td><span class="pill s-crit">Блокер окна</span></td></tr>
+            <tr data-g="risk"><td><b>Выгрузка данных по номенклатуре дилерам</b><br><span class="sub">работала 26 дней из 32 без ошибок, встала 10.09</span></td><td class="sched">8:30–20:30 каждые 7 201 с <span class="arrow-to">→</span> при возврате — окно вне 15:00–21:00</td><td class="num">0</td><td class="id">В1-7</td><td><span class="pill s-wait">Ждёт Б-06</span></td></tr>
+            <tr data-g="later"><td><b>resanopt_goods_full</b><br><span class="sub">212,4 ч — 25,9 % машинного времени базы, 6–9 ч на прогон, 20 % ошибок</span></td><td class="sched">22:00–7:00 один раз в день <span class="arrow-to">→</span> инкрементальная выгрузка + ограничение длительности</td><td class="num">0</td><td class="id">В3-1</td><td><span class="pill s-idle">Волна 3</span></td></tr>
+            <tr data-g="later"><td><b>Диадок: Регламентные действия</b><br><span class="sub">55,2 ч, 24,5 % запусков с ошибкой «Недостаточно фактических параметров»</span></td><td class="sched">с 21:30:00 один раз в день <span class="arrow-to">→</span> без изменений, требуется разбор дефекта</td><td class="num">0</td><td class="id">В4-1</td><td><span class="pill s-idle">Волна 4</span></td></tr>
+            <tr data-g="later"><td><b>«Проверка договоров на сдачу в архив»</b> и <b>«[ДЗ] Выполнение просроченных задач»</b><br><span class="sub">100 % и 66 % ошибок за 32 дня</span></td><td class="sched">— <span class="arrow-to">→</span> исправить либо отключить</td><td class="num">0</td><td class="id">В4-3</td><td><span class="pill s-idle">Волна 4</span></td></tr>
+            <tr data-g="later"><td><b>43 подтверждённо мёртвых задания</b><br><span class="sub">0 запусков за 32 дня; 47 заданий без владельца</span></td><td class="sched">— <span class="arrow-to">→</span> удалить из реестра, назначить владельцев остальным</td><td class="num">0</td><td class="id">В5-1</td><td><span class="pill s-idle">Волна 5</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 05 ВОЛНЫ -->
+    <section id="waves">
+      <div class="sh"><h2><span class="num">05</span>Волны и задачи</h2><span class="upd">обновлено 28.09.2026</span></div>
+      <p>Задача раскрывается по клику: внутри — подзадачи, ответственный, дедлайн, критерий приёмки и зависимости. Прогресс волны считается по закрытым подзадачам.</p>
+      <div class="waves" id="waves">
+
+        <article class="wave active">
+          <div class="whead">
+            <h3><span class="c">В1</span>Вечернее окно 15:00–21:00</h3>
+            <div class="wmeta"><span>28.09 – 27.10.2026</span><span class="pill s-work">В работе</span><span class="prog" title="прогресс волны"><b style="width:9%"></b></span><span>9&nbsp;%</span></div>
+          </div>
+          <div class="wbody">
+
+            <details class="task">
+              <summary><span class="tid">В1-0</span><span class="tt">Базовый замер окна и профиль нового задания<em>Без базовой линии эффект правок нечем подтвердить, без профиля нового РЗ — нечем проверить достаточность</em></span><span class="dl hot">до 02.10</span><span class="st"><span class="pill s-work">В работе</span></span></summary>
+              <div class="tdetail">
+                <ul class="checks">
+                  <li class="done"><i>[x]</i>Разложить машинное время по часам суток по расписаниям и журналу — карта суток раздела 02</li>
+                  <li><i>[ ]</i>Снять ожидания на управляемых блокировках в окне 15:00–21:00 за 5 рабочих дней</li>
+                  <li><i>[ ]</i>Зафиксировать среднее и максимальное время проведения ключевых документов</li>
+                  <li><i>[ ]</i>Получить профиль нового РЗ: длительность прогона, периодичность, записываемые объекты</li>
+                </ul>
+                <dl class="fields">
+                  <dt>Ответственный</dt><dd>Администратор 1С · Проект</dd>
+                  <dt>Критерий</dt><dd>Есть числовая базовая линия, с которой сравнивается контрольный замер В1-8</dd>
+                  <dt>Зависит от</dt><dd><span class="pill s-crit">Б-03</span> профиль нового задания</dd>
+                </dl>
+              </div>
+            </details>
+
+            <details class="task">
+              <summary><span class="tid">В1-1</span><span class="tt">Битрикс: обрезать дневную серию по 14:00<em>Самая крупная позиция: 2,02 ч/сутки, 37 % нагрузки окна</em></span><span class="dl">до 08.10</span><span class="st"><span class="pill s-wait">Ждёт Б-01</span></span></summary>
+              <div class="tdetail">
+                <ul class="checks">
+                  <li><i>[ ]</i>Согласовать допустимую задержку актуализации каталога (Б-01)</li>
+                  <li><i>[ ]</i>Заменить <code>с 9:10:00 по 19:00:00 каждые 10 000 с</code> на <code>с 9:00:00 по 14:00:00 каждые 10 000 с</code></li>
+                  <li><i>[ ]</i>Проверить по журналу: последний дневной прогон завершается до 15:00</li>
+                </ul>
+                <dl class="fields">
+                  <dt>Эффект</dt><dd>−2,02 ч/сутки в окне, около 64,6 ч за 32 дня</dd>
+                  <dt>Цена</dt><dd>Дневных актуализаций каталога 2 вместо 4; задержка данных на сайте растёт с ~2,8 до ~7 ч во второй половине дня</dd>
+                  <dt>Промежуточный вариант</dt><dd>Обрезка по 15:00 вместо 14:00: уходит только старт 17:30, освобождается ≈37 ч</dd>
+                  <dt>Ответственный</dt><dd>Администратор 1С</dd>
+                </dl>
+              </div>
+            </details>
+
+            <details class="task">
+              <summary><span class="tid">В1-2</span><span class="tt">Insales: обрезать дневную серию по 14:00<em>Та же правка тем же движением, отдача меньше</em></span><span class="dl">до 08.10</span><span class="st"><span class="pill s-wait">Ждёт Б-01</span></span></summary>
+              <div class="tdetail">
+                <ul class="checks">
+                  <li><i>[ ]</i>Заменить <code>с 9:00:00 по 19:00:00 каждые 10 000 с</code> на <code>с 9:00:00 по 14:00:00 каждые 10 000 с</code></li>
+                  <li><i>[ ]</i>Проверить, что старт 17:20 больше не появляется в журнале</li>
+                </ul>
+                <dl class="fields">
+                  <dt>Эффект</dt><dd>−0,24 ч/сутки в окне, около 7,7 ч за 32 дня</dd>
+                  <dt>Ответственный</dt><dd>Администратор 1С</dd>
+                </dl>
+              </div>
+            </details>
+
+            <details class="task">
+              <summary><span class="tid">В1-3</span><span class="tt">revitech_goods_full: перенести старт с 20:00 за 22:30<em>Самая дешёвая позиция списка: чистая смена расписания без бизнес-вопросов</em></span><span class="dl">до 08.10</span><span class="st"><span class="pill s-work">Готово к правке</span></span></summary>
+              <div class="tdetail">
+                <ul class="checks">
+                  <li><i>[ ]</i>Проверить, что 22:30 не накладывается на resanopt_goods_full (старт 22:00, прогон 6–9 ч) и sanmixpro_goods_full</li>
+                  <li><i>[ ]</i>Заменить <code>с 20:00:00 один раз в день</code> на <code>с 22:30:00 один раз в день</code></li>
+                  <li><i>[ ]</i>Убедиться по журналу, что прогон завершается до 6:00</li>
+                </ul>
+                <dl class="fields">
+                  <dt>Эффект</dt><dd>−0,75 ч/сутки в окне, около 24 ч за 32 дня</dd>
+                  <dt>Оговорка</dt><dd>Ночь загружена плотнее дня — перенос требует пересборки ночного окна, а не досыпания в него</dd>
+                  <dt>Ответственный</dt><dd>Администратор 1С</dd>
+                </dl>
+              </div>
+            </details>
+
+            <details class="task">
+              <summary><span class="tid">В1-4</span><span class="tt">Остатки: ввести окно и разрядить интервал в 15:00–21:00<em>Задание пишет остатки непрерывно ровно тогда, когда люди проводят документы</em></span><span class="dl">до 13.10</span><span class="st"><span class="pill s-wait">Ждёт Б-02</span></span></summary>
+              <div class="tdetail">
+                <ul class="checks">
+                  <li><i>[ ]</i>Выяснить, требование бизнеса это или настройка по умолчанию (Б-02)</li>
+                  <li><i>[ ]</i>Ввести расписание с окнами: 180 с вне 15:00–21:00, 600 с внутри</li>
+                  <li><i>[ ]</i>Проверить влияние на блокировки регистров остатков контрольным замером</li>
+                </ul>
+                <dl class="fields">
+                  <dt>Эффект</dt><dd>−0,82 ч/сутки в окне, около 26 ч за 32 дня</dd>
+                  <dt>Риск</dt><dd>Остатки на сайте расходятся с базой до 10 минут вместо 3</dd>
+                  <dt>Ответственный</dt><dd>Администратор 1С · согласование с бизнесом</dd>
+                </dl>
+              </div>
+            </details>
+
+            <details class="task">
+              <summary><span class="tid">В1-5</span><span class="tt">ВМС: снизить частоту с 20 до 120 секунд<em>По машинному времени эффект скромный, по числу сессий планировщика — основной</em></span><span class="dl">до 13.10</span><span class="st"><span class="pill s-work">Готово к правке</span></span></summary>
+              <div class="tdetail">
+                <ul class="checks">
+                  <li><i>[ ]</i>Согласовать допустимую задержку обмена с ВМС</li>
+                  <li><i>[ ]</i>Заменить <code>каждые 20 секунд</code> на <code>каждые 120 секунд</code></li>
+                  <li><i>[ ]</i>Сравнить число запусков за сутки до и после</li>
+                </ul>
+                <dl class="fields">
+                  <dt>Эффект</dt><dd>−0,30 ч/сутки в окне, минус около 1 080 сессий планировщика за 6 часов</dd>
+                  <dt>Ответственный</dt><dd>Администратор 1С</dd>
+                </dl>
+              </div>
+            </details>
+
+            <details class="task">
+              <summary><span class="tid">В1-6</span><span class="tt">revitech_prices_change: сузить окно до 7:00–15:00<em>Сейчас мелочь, но на проектном объёме интеграции перекроет рабочий день</em></span><span class="dl">до 13.10</span><span class="st"><span class="pill s-work">Готово к правке</span></span></summary>
+              <div class="tdetail">
+                <ul class="checks">
+                  <li><i>[ ]</i>Заменить <code>с 7:00:00 по 22:00:00</code> на <code>с 7:00:00 по 15:00:00</code></li>
+                  <li><i>[ ]</i>Согласовать с владельцем интеграции Ревитех ожидаемый рост объёма</li>
+                </ul>
+                <dl class="fields">
+                  <dt>Эффект</dt><dd>−0,13 ч/сутки сейчас; предотвращает перекрытие окна после выхода интеграции на проектный объём</dd>
+                  <dt>Ответственный</dt><dd>Администратор 1С</dd>
+                </dl>
+              </div>
+            </details>
+
+            <details class="task">
+              <summary><span class="tid">В1-7</span><span class="tt">Закрыть блокеры окна: «зомби», «один день», ограничение длительности<em>Не про экономию часов, а про то, чтобы новое задание не выбило случайным образом</em></span><span class="dl">до 22.10</span><span class="st"><span class="pill s-crit">Критично</span></span></summary>
+              <div class="tdetail">
+                <ul class="checks">
+                  <li><i>[ ]</i>revitech_goods_pictures: реальный останов либо ночное окно и жёсткое ограничение длительности</li>
+                  <li><i>[ ]</i>resanopt_goods_change: изменить сетку <code>с 8:00:00 каждые 18 000 с</code> до реактивации — старт 18:00 приземляется в середину окна</li>
+                  <li><i>[ ]</i>Четыре задания с типом «один день»: исправлять тип только вместе с заданием окна вне 15:00–21:00</li>
+                  <li><i>[ ]</i>Задать ограничение времени выполнения тяжёлым заданиям — сейчас его нет ни у одного</li>
+                  <li><i>[ ]</i>Выяснить судьбу «Выгрузки данных по номенклатуре дилерам» (Б-06) до её возможного возврата</li>
+                </ul>
+                <dl class="fields">
+                  <dt>Основание</dt><dd>6 «зомби» в реестре; повтор прогона goods_pictures на 20,4 ч съедает окно целиком</dd>
+                  <dt>Ответственный</dt><dd>Администратор 1С · разработчик обменов</dd>
+                </dl>
+              </div>
+            </details>
+
+            <details class="task">
+              <summary><span class="tid">В1-8</span><span class="tt">Контрольный замер и передача окна<em>Веха волны: окно принято под новое регламентное задание</em></span><span class="dl">27.10</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail">
+                <ul class="checks">
+                  <li><i>[ ]</i>Повторить замер блокировок и времени проведения документов за 5 рабочих дней</li>
+                  <li><i>[ ]</i>Сверить фактическую плотность окна с целевой (не выше 0,25)</li>
+                  <li><i>[ ]</i>Проверить, что новое РЗ не конкурирует по объектам с оставшимся фоном</li>
+                  <li><i>[ ]</i>Заполнить таблицу замеров раздела 07 и зафиксировать версию документа</li>
+                </ul>
+                <dl class="fields">
+                  <dt>Критерий приёмки</dt><dd>Плотность окна ≤ 0,25 ч/ч; ожидания на блокировках в окне не выше базовой линии; новое задание укладывается в окно без пересечений</dd>
+                  <dt>Ответственный</dt><dd>Руководитель проекта</dd>
+                </dl>
+              </div>
+            </details>
+
+          </div>
+        </article>
+
+        <article class="wave">
+          <div class="whead">
+            <h3><span class="c">В2</span>Дельта-обмен каталога: Битрикс и Insales</h3>
+            <div class="wmeta"><span>28.10 – 18.12.2026</span><span class="pill s-idle">Не начато</span><span class="prog"><b style="width:0%"></b></span><span>0&nbsp;%</span></div>
+          </div>
+          <div class="wbody">
+            <details class="task">
+              <summary><span class="tid">В2-1</span><span class="tt">Оценить переход Битрикса с полного каталога на дельту<em>177 ч за 32 дня при стабильной ежедневной полной выгрузке</em></span><span class="dl">до 20.11</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail">
+                <ul class="checks">
+                  <li><i>[ ]</i>Разобрать, что именно выгружается и куда (Б-07)</li>
+                  <li><i>[ ]</i>Оценить трудозатраты на регистрацию изменений вместо полной выборки</li>
+                  <li><i>[ ]</i>Проверить на копии базы: полнота данных на сайте при дельта-обмене</li>
+                </ul>
+                <dl class="fields"><dt>Ожидаемый эффект</dt><dd>Прогон перестаёт занимать 1,15 ч; дневная серия может вернуться к четырём актуализациям без нагрузки на окно</dd></dl>
+              </div>
+            </details>
+            <details class="task">
+              <summary><span class="tid">В2-2</span><span class="tt">То же для Insales<em>38,2 ч, та же двухчастная схема расписания</em></span><span class="dl">до 11.12</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail"><ul class="checks"><li><i>[ ]</i>Оценка и реализация по образцу В2-1</li></ul></div>
+            </details>
+            <details class="task">
+              <summary><span class="tid">В2-3</span><span class="tt">Вернуть частоту актуализации каталога, если бизнес просил чаще<em>Смысл дельты — снять компромисс, принятый в волне 1</em></span><span class="dl">до 18.12</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail"><ul class="checks"><li><i>[ ]</i>Пересчитать карту суток на новых длительностях прогона</li><li><i>[ ]</i>Согласовать восстановленное расписание с бизнесом</li></ul></div>
+            </details>
+          </div>
+        </article>
+
+        <article class="wave">
+          <div class="whead">
+            <h3><span class="c">В3</span>resanopt_goods_full и пересборка ночного окна</h3>
+            <div class="wmeta"><span>11.01 – 26.02.2027</span><span class="pill s-idle">Не начато</span><span class="prog"><b style="width:0%"></b></span><span>0&nbsp;%</span></div>
+          </div>
+          <div class="wbody">
+            <details class="task">
+              <summary><span class="tid">В3-1</span><span class="tt">Перевести resanopt_goods_full на инкрементальную выгрузку<em>Крупнейший резерв базы: 212,4 ч за 32 дня, 25,9 % машинного времени</em></span><span class="dl">до 12.02</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail">
+                <ul class="checks">
+                  <li><i>[ ]</i>Технический аудит алгоритма: почему полный каталог выгружается 6–9 ч (Б-04)</li>
+                  <li><i>[ ]</i>Реализовать выгрузку только изменений</li>
+                  <li><i>[ ]</i>Ввести ограничение длительности вместо ручного обрыва сеанса</li>
+                </ul>
+                <dl class="fields">
+                  <dt>Почему не раньше</dt><dd>В рабочее окно задание не попадает: старт 22:00, максимум 9,2 ч, окончание около 07:12. Это задача стабильности и ночного окна, не ускорения рабочего дня</dd>
+                  <dt>Почему после Нового года</dt><dd>Правки алгоритма обмена не совмещаются с годовым закрытием</dd>
+                </dl>
+              </div>
+            </details>
+            <details class="task">
+              <summary><span class="tid">В3-2</span><span class="tt">Пересобрать ночное окно 20:00–9:00<em>Плотность 1,14 против 0,98 днём: ночь не является свободным резервом</em></span><span class="dl">до 26.02</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail"><ul class="checks"><li><i>[ ]</i>Развести старты 21:30, 22:00, 22:30 по фактическим длительностям</li><li><i>[ ]</i>Проверить, что выгрузка бэкапов на FTP в 5:00 не конкурирует с каталогами</li><li><i>[ ]</i>Построить карту ночи по образцу раздела 02</li></ul></div>
+            </details>
+            <details class="task">
+              <summary><span class="tid">В3-3</span><span class="tt">Перевести обмен с ВМС на событийную модель<em>70,3 % всех запусков базы при полезной нагрузке 4,9 %</em></span><span class="dl">до 26.02</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail"><ul class="checks"><li><i>[ ]</i>Оценить возможность вызова обмена по событию вместо опроса</li><li><i>[ ]</i>Согласовать с провайдером ВМС</li></ul></div>
+            </details>
+          </div>
+        </article>
+
+        <article class="wave">
+          <div class="whead">
+            <h3><span class="c">В4</span>Стабильность и мониторинг</h3>
+            <div class="wmeta"><span>01.03 – 26.03.2027</span><span class="pill s-idle">Не начато</span><span class="prog"><b style="width:0%"></b></span><span>0&nbsp;%</span></div>
+          </div>
+          <div class="wbody">
+            <details class="task">
+              <summary><span class="tid">В4-1</span><span class="tt">Разобрать ошибку Диадока «Недостаточно фактических параметров»<em>12 из 49 запусков, стабильно с 06.09 — похоже на дефект конфигурации или смену API</em></span><span class="dl">до 12.03</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail"><ul class="checks"><li><i>[ ]</i>Уточнить, известна ли проблема разработчикам интеграции (Б-05)</li><li><i>[ ]</i>Исправить вызов метода фонового задания</li></ul></div>
+            </details>
+            <details class="task">
+              <summary><span class="tid">В4-2</span><span class="tt">Разобрать простои выгрузки остатков<em>9 дней простоя из 32 и 31 ошибка; с 24.08 работает стабильно</em></span><span class="dl">до 19.03</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail"><ul class="checks"><li><i>[ ]</i>Найти причину простоев 16–23.08 и 29–30.08</li><li><i>[ ]</i>Подтвердить надёжность канала после правок волны 1</li></ul></div>
+            </details>
+            <details class="task">
+              <summary><span class="tid">В4-3</span><span class="tt">Исправить или отключить два задания с постоянными ошибками<em>«Проверка договоров на сдачу в архив» — 100 % ошибок, «[ДЗ] Выполнение просроченных задач» — 66 %</em></span><span class="dl">до 19.03</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail"><ul class="checks"><li><i>[ ]</i>Определить, нужна ли функциональность вообще</li><li><i>[ ]</i>Исправить либо отключить с фиксацией решения</li></ul></div>
+            </details>
+            <details class="task">
+              <summary><span class="tid">В4-4</span><span class="tt">Настроить мониторинг ошибок обменов с оповещением<em>Сбой веб-сервиса ВМС 8–9.09 (172 ошибки за двое суток) обнаружен только постфактум при анализе</em></span><span class="dl">до 26.03</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail"><ul class="checks"><li><i>[ ]</i>Определить порог срабатывания по числу ошибок за час</li><li><i>[ ]</i>Настроить оповещение ответственного</li></ul></div>
+            </details>
+          </div>
+        </article>
+
+        <article class="wave">
+          <div class="whead">
+            <h3><span class="c">В5</span>Чистота реестра и регламент эксплуатации</h3>
+            <div class="wmeta"><span>29.03 – 30.04.2027</span><span class="pill s-idle">Не начато</span><span class="prog"><b style="width:0%"></b></span><span>0&nbsp;%</span></div>
+          </div>
+          <div class="wbody">
+            <details class="task">
+              <summary><span class="tid">В5-1</span><span class="tt">Удалить 43 подтверждённо мёртвых задания и назначить владельцев<em>0 запусков за 32 дня; 47 заданий числятся без владельца</em></span><span class="dl">до 16.04</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail"><ul class="checks"><li><i>[ ]</i>Сверить список с журналом регистрации перед удалением</li><li><i>[ ]</i>Назначить владельца каждому оставшемуся заданию</li><li><i>[ ]</i>Снять функциональные опции неиспользуемых подсистем (ЕГАИС, ИС МП, 1С-ЭДО при работающем Диадоке)</li></ul></div>
+            </details>
+            <details class="task">
+              <summary><span class="tid">В5-2</span><span class="tt">Ввести паспорт регламентного задания и ежемесячный пересмотр реестра<em>Иначе рудименты и «зомби» накопятся снова</em></span><span class="dl">до 30.04</span><span class="st"><span class="pill s-idle">Запланировано</span></span></summary>
+              <div class="tdetail"><ul class="checks"><li><i>[ ]</i>Форма паспорта: владелец, назначение, окно, ограничение длительности, действие при отказе</li><li><i>[ ]</i>Регламент: пересмотр реестра по журналу раз в месяц</li><li><i>[ ]</i>Правило: новое задание получает окно и ограничение длительности при создании</li></ul></div>
+            </details>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 06 БЛОКЕРЫ -->
+    <section id="blockers">
+      <div class="sh"><h2><span class="num">06</span>Блокеры и открытые вопросы</h2><span class="upd">обновлено 28.09.2026</span></div>
+      <p>Первые три позиции блокируют волну 1. Остальные нужны для волн 2–5 и не задерживают освобождение окна.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>№</th><th>Вопрос</th><th>Блокирует</th><th>Кто отвечает</th><th>Статус</th></tr></thead>
+          <tbody>
+            <tr><td class="id">Б-01</td><td><b>Какая задержка актуализации каталога на сайте допустима?</b> От этого зависит, можно ли сократить дневную серию с четырёх прогонов до двух. Известно ли вообще, что выгрузка идёт полным каталогом днём с 9:10 до 19:00 каждые 10 000 секунд, — это решение или наследие настройки?</td><td class="id nw">В1-1, В1-2</td><td>Бизнес · маркетинг</td><td><span class="pill s-crit">Блокер</span></td></tr>
+            <tr><td class="id">Б-02</td><td><b>Какая задержка допустима по остаткам?</b> Выгрузка работает круглосуточно каждые 180 секунд без окна — осознанное требование или настройка по умолчанию?</td><td class="id nw">В1-4</td><td>Бизнес · маркетинг</td><td><span class="pill s-crit">Блокер</span></td></tr>
+            <tr><td class="id">Б-03</td><td><b>Профиль нового регламентного задания:</b> длительность одного прогона, периодичность, какие объекты пишет (номенклатура, цены, остатки, заказы), жёсткие ли границы 15:00–21:00. Если объекты пересекаются с остатками или каталогом, дело не в машинном времени, а в блокировках</td><td class="id nw">В1-0, В1-8</td><td>Заказчик доработки</td><td><span class="pill s-crit">Блокер</span></td></tr>
+            <tr><td class="id">Б-04</td><td>Почему выгрузка полного каталога resanopt_goods_full занимает 6–9 часов? Есть ли техническая возможность перейти на инкрементальную выгрузку? Кто и почему регулярно завершает её сеанс вручную — плановая процедура или реакция на зависания?</td><td class="id nw">В3-1</td><td>Разработчик обменов · администратор 1С</td><td><span class="pill s-wait">Ожидает ответа</span></td></tr>
+            <tr><td class="id">Б-05</td><td>Диадок: известна ли ошибка «Недостаточно фактических параметров для метода фонового задания» и с какой даты она появилась? Был ли известен сбой веб-сервиса ВМС 8–9 сентября?</td><td class="id nw">В4-1, В4-4</td><td>Разработчики интеграций</td><td><span class="pill s-wait">Ожидает ответа</span></td></tr>
+            <tr><td class="id">Б-06</td><td>Что произошло 26.08 (resanopt_goods_change), 02.09 (Sanmix — Товары) и 10.09 («Выгрузка данных по номенклатуре дилерам» встала после 26 дней без ошибок)? Авария или плановое отключение? Что означает синхронный запуск группы revitech_* 10–11.09?</td><td class="id nw">В1-7</td><td>Разработчик обменов</td><td><span class="pill s-wait">Ожидает ответа</span></td></tr>
+            <tr><td class="id">Б-07</td><td>Что за массивы данных выгружают «Выгрузка на сайт Битрикс», «Выгрузка на сайт Insales» и «Выгрузка данных по номенклатуре дилерам» и куда они направлены?</td><td class="id nw">В2-1, В2-2</td><td>Разработчик обменов</td><td><span class="pill s-wait">Ожидает ответа</span></td></tr>
+            <tr><td class="id">Б-08</td><td>Есть ли тестовый контур — актуальная копия рабочей базы — для проверки изменений алгоритмов обмена до переноса в рабочую базу?</td><td class="id nw">В2, В3</td><td>Администратор 1С</td><td><span class="pill s-wait">Ожидает ответа</span></td></tr>
+            <tr><td class="id">Б-09</td><td>revitech_goods_pictures числится отключённым, но отработало 20,4 ч 15.09 со старта 11:20. Кто и чем его запускает? То же по остальным пяти «зомби»</td><td class="id nw">В1-7</td><td>Администратор 1С</td><td><span class="pill s-wait">Ожидает ответа</span></td></tr>
+            <tr><td class="id">Б-10</td><td>Кого назначить владельцами 47 заданий, числящихся без владельца? Три активных обмена работают на учётной записи подрядчика</td><td class="id nw">В5-1</td><td>Руководство · администратор 1С</td><td><span class="pill s-wait">Ожидает ответа</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 07 ЗАМЕРЫ -->
+    <section id="zamery">
+      <div class="sh"><h2><span class="num">07</span>Контрольные замеры</h2><span class="upd">обновлено 28.09.2026</span></div>
+      <p>Аудит начался с жалоб на зависания, то есть с ощущений. Чтобы результат проекта не остался таким же разговором, каждая волна закрывается замером. Столбец «факт» заполняется по итогам волны.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Метрика</th><th style="text-align:right">База 16.08–16.09</th><th style="text-align:right">Цель В1</th><th style="text-align:right">Факт В1</th><th style="text-align:right">Цель проекта</th></tr></thead>
+          <tbody>
+            <tr><td>Машинное время в окне 15:00–21:00, ч/сутки</td><td class="num">5,5</td><td class="num">≤ 1,5</td><td class="num">—</td><td class="num">≤ 1,0</td></tr>
+            <tr><td>Плотность окна, ч машинного времени на час календарного</td><td class="num">0,92</td><td class="num">≤ 0,25</td><td class="num">—</td><td class="num">≤ 0,20</td></tr>
+            <tr><td>Ожидания на управляемых блокировках в окне, с/час</td><td class="num">не измерялось</td><td class="num">базовая линия</td><td class="num">—</td><td class="num">−50&nbsp;%</td></tr>
+            <tr><td>Среднее время проведения ключевых документов, с</td><td class="num">не измерялось</td><td class="num">базовая линия</td><td class="num">—</td><td class="num">−30&nbsp;%</td></tr>
+            <tr><td>Машинное время за 32 дня, ч</td><td class="num">819,7</td><td class="num">≈ 690</td><td class="num">—</td><td class="num">560–600</td></tr>
+            <tr><td>Запусков фоновых заданий в сутки</td><td class="num">≈ 6 033</td><td class="num">≈ 2 400</td><td class="num">—</td><td class="num">≈ 2 400</td></tr>
+            <tr><td>Максимальная длительность одного прогона, ч</td><td class="num">9,2 (прервано)</td><td class="num">без изменений</td><td class="num">—</td><td class="num">≤ 2, ограничено таймаутом</td></tr>
+            <tr><td>Заданий в реестре</td><td class="num">98</td><td class="num">98</td><td class="num">—</td><td class="num">≈ 55</td></tr>
+            <tr><td>Заданий с долей ошибок ≥ 20&nbsp;%</td><td class="num">5</td><td class="num">5</td><td class="num">—</td><td class="num">0–1</td></tr>
+            <tr><td>Заданий без владельца</td><td class="num">47</td><td class="num">47</td><td class="num">—</td><td class="num">0</td></tr>
+            <tr><td>Ручных обрывов сеанса за месяц</td><td class="num">≈ 54</td><td class="num">без изменений</td><td class="num">—</td><td class="num">0</td></tr>
+            <tr><td>Health score</td><td class="num">51 / 100</td><td class="num">≈ 58</td><td class="num">—</td><td class="num">78–82</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note info">Замер блокировок до правок — обязательное условие, а не пожелание. Без базовой линии «стало быстрее» останется на уровне ощущений пользователей, с которых аудит и начинался.</div>
+    </section>
+
+    <!-- 08 РИСКИ -->
+    <section id="riski">
+      <div class="sh"><h2><span class="num">08</span>Риски</h2><span class="upd">обновлено 28.09.2026</span></div>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>№</th><th>Риск</th><th>Уровень</th><th>Мера</th></tr></thead>
+          <tbody>
+            <tr><td class="id">Р-01</td><td>Новое задание конкурирует по объектам с остатками или каталогом: разгрузка окна по часам не снимает конкуренцию за блокировки</td><td class="p-crit">Высокий</td><td>Получить профиль нового РЗ (Б-03) до правок; проверить пересечение объектов на приёмке В1-8</td></tr>
+            <tr><td class="id">Р-02</td><td>Ни у одного тяжёлого задания нет ограничения длительности: затянувшийся прогон в окне некому остановить, кроме человека</td><td class="p-crit">Высокий</td><td>Задать ограничение времени выполнения в рамках В1-7, не дожидаясь волны 3</td></tr>
+            <tr><td class="id">Р-03</td><td>revitech_goods_pictures повторно отработает 20,4 ч со старта 11:20 и съест окно целиком</td><td class="p-crit">Высокий</td><td>Реальный останов либо ночное окно с жёстким таймаутом (В1-7); выяснить, кто запускает (Б-09)</td></tr>
+            <tr><td class="id">Р-04</td><td>Сокращение дневных серий даёт устаревший каталог и остатки на сайтах; претензии придут от бизнеса после правки</td><td class="p-high">Средний</td><td>Согласовать допустимые задержки (Б-01, Б-02) до правки; держать промежуточный вариант «обрезка по 15:00»</td></tr>
+            <tr><td class="id">Р-05</td><td>resanopt_goods_change вернётся в строй со старой сеткой и приземлится стартом 18:00 в середину окна</td><td class="p-high">Средний</td><td>Изменить сетку до реактивации (В1-7)</td></tr>
+            <tr><td class="id">Р-06</td><td>Кто-то исправит тип расписания «один день» у четырёх заданий, и они пойдут круглосуточно без окна</td><td class="p-high">Средний</td><td>Правку типа делать только вместе с заданием окна вне 15:00–21:00 (В1-7)</td></tr>
+            <tr><td class="id">Р-07</td><td>Перенос revitech_goods_full на 22:30 наложится на resanopt_goods_full и удлинит ночной хвост до рабочего дня</td><td class="p-high">Средний</td><td>Проверить пересечение до правки (В1-3); ночное окно пересобирается в волне 3, а не досыпается</td></tr>
+            <tr><td class="id">Р-08</td><td>Изменения алгоритмов обмена проверяются прямо в рабочей базе при отсутствии тестового контура</td><td class="p-high">Средний</td><td>Выяснить наличие копии базы (Б-08) до начала волны 2</td></tr>
+            <tr><td class="id">Р-09</td><td>Рост объёма интеграции Ревитех перекроет рабочий день через revitech_prices_change с окном 7:00–22:00</td><td class="p-mid">Низкий</td><td>Сузить окно заранее (В1-6), пока объём невелик</td></tr>
+            <tr><td class="id">Р-10</td><td>Эффект проекта не подтверждается цифрой: «стало быстрее» остаётся оценкой на слух</td><td class="p-high">Средний</td><td>Замер блокировок до и после каждой волны (раздел 07); без замера задача не закрывается</td></tr>
+            <tr><td class="id">Р-11</td><td>Правки алгоритмов совпадут с годовым закрытием</td><td class="p-mid">Низкий</td><td>Волна 3 начинается после 11.01.2027; волна 2 завершается до 18.12</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 09 РЕШЕНИЯ -->
+    <section id="reshenia">
+      <div class="sh"><h2><span class="num">09</span>Журнал решений</h2><span class="upd">обновлено 28.09.2026</span></div>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>№</th><th>Дата</th><th>Решение</th><th>Кем принято</th><th>Статус</th></tr></thead>
+          <tbody>
+            <tr><td class="id">Р-01</td><td class="nw">28.09.2026</td><td>Оптимизация выделена в отдельный проект с собственным планом, дедлайнами и контролем; аудит остаётся его основанием и источником данных</td><td>Руководитель проекта</td><td><span class="pill s-ok">Принято</span></td></tr>
+            <tr><td class="id">Р-02</td><td class="nw">28.09.2026</td><td>Первая волна — освобождение окна 15:00–21:00 под новое регламентное задание</td><td>Руководитель проекта</td><td><span class="pill s-ok">Принято</span></td></tr>
+            <tr><td class="id">Р-03</td><td class="nw">28.09.2026</td><td>Ночное окно под новое задание не рассматривается: его плотность 1,14 против 0,98 в дневном</td><td>Руководитель проекта</td><td><span class="pill s-ok">Принято</span></td></tr>
+            <tr><td class="id">Р-04</td><td class="nw">28.09.2026</td><td>Волна 1 ограничивается правками расписаний как обратимыми; рефакторинг алгоритмов выносится в волны 2–3</td><td>—</td><td><span class="pill s-wait">Предложено</span></td></tr>
+            <tr><td class="id">Р-05</td><td class="nw">28.09.2026</td><td>До правок выполняется замер ожиданий на управляемых блокировках; без базовой линии волна не закрывается</td><td>—</td><td><span class="pill s-wait">Предложено</span></td></tr>
+            <tr><td class="id">Р-06</td><td class="nw">28.09.2026</td><td>Приоритет работ определяется вкладом в окно 15:00–21:00, а не общим машинным временем задания</td><td>Руководитель проекта</td><td><span class="pill s-ok">Принято</span></td></tr>
+            <tr><td class="id">Р-07</td><td class="nw">28.09.2026</td><td>Ограничение длительности тяжёлым заданиям вводится в волне 1, не дожидаясь рефакторинга алгоритмов</td><td>—</td><td><span class="pill s-wait">Предложено</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 10 ВЕРСИИ -->
+    <section id="versii">
+      <div class="sh"><h2><span class="num">10</span>Версии документа</h2><span class="upd">обновлено 28.09.2026</span></div>
+      <p class="sub">Каждое обновление повышает версию и отмечается здесь. У каждого раздела указана дата его последнего изменения. Версия документа в шапке и заголовок коммита в репозитории совпадают.</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Версия</th><th>Дата</th><th>Что изменилось</th></tr></thead>
+          <tbody>
+            <tr><td class="id">0.1</td><td class="nw">28.09.2026</td><td>Документ создан на основании аудита регламентных и фоновых заданий v3. Окно 15:00–21:00 разложено по часам и заданиям (карта суток), собран реестр 17 позиций с целевыми расписаниями, план из пяти волн с задачами, подзадачами и дедлайнами, 10 блокеров, таблица контрольных замеров, 11 рисков, 7 решений</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <footer>
+        <span>Внутренний документ проекта. Данные аудита: журнал регистрации за 16.08–16.09.2026 (32 дня), выгрузка расписаний всех 98 регламентных заданий от 21.09.2026.</span>
+        <span>Сроки волн 2–5 ориентировочные и уточняются по итогам предыдущей волны.</span>
+      </footer>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ── тема ─────────────────────────────────────────── */
+  var tb = document.getElementById('themebtn');
+  tb.addEventListener('click', function(){
+    var cur = document.documentElement.getAttribute('data-theme');
+    if (!cur){
+      var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      cur = dark ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  });
+
+  /* ── карта суток ──────────────────────────────────── */
+  var WIN_FROM = 15, WIN_TO = 21;   // окно [15,21)
+
+  // runs: [стартовый час (дробный), длительность в часах] — среднесуточно
+  // cont: часы машинного времени в каждом часе суток (круглосуточные задания)
+  // contWin: значение внутри окна, если отличается
+  var JOBS = [
+    { n:'Выгрузка на сайт Битрикс', k:'полный каталог · 1,15 ч на прогон',
+      now:{runs:[[1.0,1.15],[9.17,1.15],[11.94,1.15],[14.72,1.15],[17.50,1.15]]},
+      aft:{runs:[[1.0,1.15],[9.0,1.15],[11.78,1.15]]} },
+    { n:'Выгрузка на сайт Insales', k:'полный каталог · 0,24 ч на прогон',
+      now:{runs:[[1.0,0.24],[9.0,0.24],[11.78,0.24],[14.56,0.24],[17.33,0.24]]},
+      aft:{runs:[[1.0,0.24],[9.0,0.24],[11.78,0.24]]} },
+    { n:'Выгрузка остатков на сайт', k:'каждые 180 с · окна нет',
+      now:{cont:0.204},
+      aft:{cont:0.204, contWin:0.068} },
+    { n:'Выгрузка данных в ВМС', k:'каждые 20 с · окна нет',
+      now:{cont:0.052},
+      aft:{cont:0.009} },
+    { n:'Обмены заказами и буфер сообщений', k:'каждые 300–700 с',
+      now:{cont:0.120}, aft:{cont:0.120} },
+    { n:'revitech_prices_change', k:'ежечасно в окне 7:00–22:00',
+      now:{hours:{7:0.025,8:0.025,9:0.025,10:0.025,11:0.025,12:0.025,13:0.025,14:0.025,15:0.025,16:0.025,17:0.025,18:0.025,19:0.025,20:0.025,21:0.025}},
+      aft:{hours:{7:0.025,8:0.025,9:0.025,10:0.025,11:0.025,12:0.025,13:0.025,14:0.025}} },
+    { n:'Рассылка по электронной почте', k:'пн–пт 9:00–18:00 каждые 900 с',
+      now:{hours:{9:0.035,10:0.035,11:0.035,12:0.035,13:0.035,14:0.035,15:0.035,16:0.035,17:0.035}},
+      aft:{hours:{9:0.035,10:0.035,11:0.035,12:0.035,13:0.035,14:0.035,15:0.035,16:0.035,17:0.035}} },
+    { n:'revitech_goods_full', k:'0,75 ч на прогон',
+      now:{runs:[[20.0,0.75]]}, aft:{runs:[[22.5,0.75]]} },
+    { n:'Диадок: Регламентные действия', k:'1,13 ч на прогон',
+      now:{runs:[[21.5,1.13]]}, aft:{runs:[[21.5,1.13]]} },
+    { n:'resanopt_goods_full', k:'6,1 ч на прогон, максимум 9,2 ч',
+      now:{runs:[[22.0,6.1]]}, aft:{runs:[[22.0,6.1]]} },
+    { n:'sanmixpro_goods_full', k:'старт 22:00',
+      now:{runs:[[22.0,0.19]]}, aft:{runs:[[22.0,0.19]]} }
+  ];
+
+  var RISKS = [
+    { n:'revitech_goods_pictures', k:'риск: 20,4 ч одним прогоном 15.09', from:11.33, to:24 },
+    { n:'resanopt_goods_change', k:'риск: старты 8:00, 13:00, 18:00 по 2,46 ч', spans:[[8,10.5],[13,15.5],[18,20.5]] }
+  ];
+
+  function spread(job, mode){
+    var h = new Array(24).fill(0), cfg = job[mode], i;
+    if (cfg.cont != null){
+      for (i=0;i<24;i++){
+        var inWin = (i >= WIN_FROM && i < WIN_TO);
+        h[i] = (inWin && cfg.contWin != null) ? cfg.contWin : cfg.cont;
+      }
+    }
+    if (cfg.hours){ for (var k in cfg.hours){ h[+k] += cfg.hours[k]; } }
+    if (cfg.runs){
+      cfg.runs.forEach(function(r){
+        var t = r[0], left = r[1];
+        while (left > 1e-9){
+          var hour = Math.floor(t) % 24;
+          var room = Math.ceil(t + 1e-9) - t;
+          if (room <= 1e-9) room = 1;
+          var take = Math.min(room, left);
+          h[hour] += take;
+          t += take; left -= take;
+        }
+      });
+    }
+    return h;
+  }
+
+  function cls(v){
+    if (v <= 0.0005) return '';
+    if (v <= 0.25) return 'l1';
+    if (v <= 0.60) return 'l2';
+    if (v <= 1.00) return 'l3';
+    return 'l4';
+  }
+  function fmt(v){ return v.toLocaleString('ru-RU',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function fmt1(v){ return v.toLocaleString('ru-RU',{minimumFractionDigits:1, maximumFractionDigits:1}); }
+
+  var heat = document.getElementById('heat');
+  var mode = 'now';
+
+  function render(){
+    var html = '', i, totals = new Array(24).fill(0);
+
+    html += '<div class="hrow head"><div class="hlab"><b>Задание</b><span>ч машинного времени в часе</span></div>';
+    for (i=0;i<24;i++){
+      var w = (i>=WIN_FROM && i<WIN_TO) ? ' win' : '';
+      html += '<div class="hcell'+w+'">'+String(i).padStart(2,'0')+'</div>';
+    }
+    html += '</div>';
+
+    JOBS.forEach(function(job){
+      var h = spread(job, mode);
+      html += '<div class="hrow"><div class="hlab"><b>'+job.n+'</b><span>'+job.k+'</span></div>';
+      for (i=0;i<24;i++){
+        totals[i] += h[i];
+        var c = cls(h[i]), w = (i>=WIN_FROM && i<WIN_TO) ? ' win' : '';
+        var label = h[i] > 0.0005 ? '<span class="v">'+fmt(h[i]).replace(/^0,/,',')+'</span>' : '';
+        html += '<div class="hcell'+w+' '+c+'" title="'+job.n+', '+String(i).padStart(2,'0')+':00 — '+fmt(h[i])+' ч">'+label+'</div>';
+      }
+      html += '</div>';
+    });
+
+    html += '<div class="hrow total"><div class="hlab"><b>Итого в часе</b><span>сумма по всем заданиям</span></div>';
+    for (i=0;i<24;i++){
+      var c2 = cls(totals[i]), w2 = (i>=WIN_FROM && i<WIN_TO) ? ' win' : '';
+      html += '<div class="hcell'+w2+' '+c2+'" title="Итого '+String(i).padStart(2,'0')+':00 — '+fmt(totals[i])+' ч"><span class="v">'+fmt(totals[i])+'</span></div>';
+    }
+    html += '</div>';
+
+    RISKS.forEach(function(r){
+      html += '<div class="hrow risk"><div class="hlab"><b>'+r.n+'</b><span>'+r.k+'</span></div>';
+      for (i=0;i<24;i++){
+        var on = false;
+        if (r.spans){ r.spans.forEach(function(s){ if (i>=Math.floor(s[0]) && i<Math.ceil(s[1])) on = true; }); }
+        else if (i>=Math.floor(r.from) && i<r.to){ on = true; }
+        var w3 = (i>=WIN_FROM && i<WIN_TO) ? ' win' : '';
+        html += '<div class="hcell'+w3+(on?' dash':'')+'"></div>';
+      }
+      html += '</div>';
+    });
+
+    heat.innerHTML = html;
+
+    var winSum = 0;
+    for (i=WIN_FROM;i<WIN_TO;i++) winSum += totals[i];
+    var dens = winSum / (WIN_TO - WIN_FROM);
+    document.getElementById('sum-win').textContent = fmt1(winSum);
+    document.getElementById('sum-dens').textContent = fmt(dens);
+    return {win:winSum, dens:dens};
+  }
+
+  // считаем оба сценария для табло
+  var savedMode = mode;
+  mode = 'now';  var resNow = render();
+  mode = 'aft';  var resAft = render();
+  mode = savedMode; render();
+
+  document.getElementById('k-now').innerHTML = fmt1(resNow.win)+'<small> ч/сутки</small>';
+  document.getElementById('k-dens').textContent = fmt(resNow.dens);
+  document.getElementById('k-after').innerHTML = fmt1(resAft.win)+'<small> ч/сутки</small>';
+  document.getElementById('k-dens2').textContent = fmt(resAft.dens);
+  var free = resNow.win - resAft.win;
+  document.getElementById('k-free').innerHTML = fmt1(free)+'<small> ч/сутки</small>';
+  document.getElementById('k-free32').textContent = Math.round(free*32);
+  document.getElementById('k-freepct').textContent = Math.round(free/resNow.win*100);
+
+  var bNow = document.getElementById('btn-now'), bAft = document.getElementById('btn-after');
+  function setMode(m){
+    mode = m;
+    bNow.setAttribute('aria-pressed', String(m === 'now'));
+    bAft.setAttribute('aria-pressed', String(m === 'aft'));
+    render();
+  }
+  bNow.addEventListener('click', function(){ setMode('now'); });
+  bAft.addEventListener('click', function(){ setMode('aft'); });
+
+  /* ── фильтр реестра ───────────────────────────────── */
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#reg tbody tr'));
+  var fbtns = Array.prototype.slice.call(document.querySelectorAll('button.f'));
+  var fcount = document.getElementById('f-count');
+  function applyFilter(f){
+    var shown = 0;
+    rows.forEach(function(tr){
+      var ok = (f === 'all') || (tr.getAttribute('data-g') === f);
+      tr.classList.toggle('hidden', !ok);
+      if (ok) shown++;
+    });
+    fcount.textContent = shown;
+    fbtns.forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-f') === f)); });
+  }
+  fbtns.forEach(function(b){
+    b.addEventListener('click', function(){ applyFilter(b.getAttribute('data-f')); });
+  });
+  applyFilter('all');
+
+  /* ── прогресс волн по чеклистам ───────────────────── */
+  Array.prototype.slice.call(document.querySelectorAll('.wave')).forEach(function(w){
+    var items = w.querySelectorAll('.checks li');
+    if (!items.length) return;
+    var done = w.querySelectorAll('.checks li.done').length;
+    var pct = Math.round(done / items.length * 100);
+    var bar = w.querySelector('.prog b');
+    var lbl = w.querySelector('.wmeta span:last-child');
+    if (bar) bar.style.width = pct + '%';
+    if (lbl) lbl.textContent = pct + ' %';
+  });
+})();
+</script>
+</html>
