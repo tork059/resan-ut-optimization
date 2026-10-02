@@ -1,12 +1,11 @@
 <!doctype html>
-<html lang="ru">
-<meta charset="utf-8">
+<html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Пульт оптимизации 1С:УТ</title>
 <meta name="description" content="Рабочий пульт проекта оптимизации базы 1С:УТ: ресурсы базы, три контура работ, единая очередь задач и журнал замеров.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap">
 <style>
 :root{
   --acc:#b06016;
@@ -226,7 +225,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 
-<div class="bar">
+</head><body><div class="bar">
   <div class="bar-in">
     <span class="brand"><b>◤</b>ПУЛЬТ ОПТИМИЗАЦИИ · РЕСАН УТ</span>
     <nav class="chips">
@@ -236,7 +235,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
       <a href="#zam">замеры</a>
       <a href="#lenta">лента</a>
     </nav>
-    <button class="tbtn" id="ghbtn" type="button" hidden>вход</button>
+    <button class="tbtn" id="ghbtn" type="button" hidden="">вход</button>
     <button class="tbtn" id="th" type="button">тема</button>
   </div>
 </div>
@@ -267,7 +266,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
       <div>
         <div class="rt"><b>Вечернее окно 15:00–21:00</b><span class="tag t-bad">занято</span></div>
         <div class="rv" id="r1">5,5<small> ч/сут</small></div>
-        <div class="gauge"><i class="over" id="g1" style="width:92%"></i><span class="tgt" style="left:25%"></span></div>
+        <div class="gauge"><i class="over" id="g1" style="width: 92.016667%;"></i><span class="tgt" style="left:25%"></span></div>
         <div class="rn">Плотность <b id="d1">0,92</b> ч машинного времени на час календарного. Цель — <b>0,25</b> (отметка на шкале). Под новое регламентное задание.</div>
       </div>
       <div>
@@ -348,7 +347,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
     </div>
 
     <!-- ── Помеченные на удаление ── -->
-    <div class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+    <div class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden="">
       <div class="pgrid">
         <div class="main">
           <p style="margin-bottom:14px">Удаление помеченных объектов — операция, которая читает всю базу на поиск ссылок и монопольно блокирует её на время выполнения. Значит, это не «включить и забыть», а работа, которой нужно окно и оценка длительности. Ни того, ни другого без замера назначить нельзя, поэтому контур начинается с обследования.</p>
@@ -415,7 +414,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
     </div>
 
     <!-- ── Толстый → тонкий клиент ── -->
-    <div class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+    <div class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden="">
       <div class="pgrid">
         <div class="main">
           <div class="warnbox bad" style="margin-bottom:16px">
@@ -764,5 +763,6 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
   filt('all');
 })();
 </script>
-<script src="editor.js" defer></script>
-</html>
+<script src="editor.js" defer=""></script>
+
+</body></html>
