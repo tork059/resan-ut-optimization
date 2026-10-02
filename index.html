@@ -236,6 +236,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
       <a href="#zam">замеры</a>
       <a href="#lenta">лента</a>
     </nav>
+    <button class="tbtn" id="ghbtn" type="button" hidden>вход</button>
     <button class="tbtn" id="th" type="button">тема</button>
   </div>
 </div>
@@ -560,7 +561,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
     <h2>Журнал замеров <em>строка добавляется при каждом замере; правки без замера не считаются выполненными</em></h2>
     <div class="pad">
       <div class="tw" style="border:1px solid var(--rule)">
-        <table>
+        <table id="meas">
           <thead><tr><th>Дата</th><th>Метрика</th><th style="text-align:right">Значение</th><th>Событие</th><th>Контур</th></tr></thead>
           <tbody>
             <tr><td class="m">16.08–16.09</td><td>Машинное время базы за 32 дня</td><td class="r">819,7 ч</td><td class="sm">Журнал регистрации, исходный аудит</td><td class="sm">Задания</td></tr>
@@ -584,7 +585,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
     <h2>Что выяснить <em>вопрос держит работу, пока на него нет ответа</em></h2>
     <div class="pad">
       <div class="tw" style="border:1px solid var(--rule)">
-        <table>
+        <table id="qa">
           <thead><tr><th>Вопрос</th><th>Держит работу</th><th>Кому</th></tr></thead>
           <tbody>
             <tr><td>Какая задержка актуализации каталога на сайтах допустима? Известно ли, что выгрузка идёт полным каталогом днём каждые 2 ч 46 мин — это решение или наследие настройки?</td><td class="sm">«Битрикс: серия до 14:00», «Insales: серия до 14:00»</td><td class="sm">Бизнес</td></tr>
@@ -763,4 +764,5 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
   filt('all');
 })();
 </script>
+<script src="editor.js" defer></script>
 </html>
