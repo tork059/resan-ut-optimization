@@ -177,7 +177,7 @@ tbody tr:hover{background:var(--paper-2)}
 .mx .q.hot{background:var(--acc-soft)}
 .mx .qt{width:100%;font-size:10.5px;font-family:var(--m);text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-bottom:2px}
 .mx .xax{grid-column:2/4;text-align:center;font-size:11px;font-family:var(--m);color:var(--dim);letter-spacing:.06em;text-transform:uppercase;padding-top:6px}
-.node{font-family:var(--m);font-size:11.5px;padding:3px 7px;border:1px solid var(--rule-2);background:var(--paper);white-space:nowrap;cursor:default}
+.node{font-family:var(--m);font-size:11.5px;padding:3px 7px;border:1px solid var(--rule-2);background:var(--paper);white-space:normal;max-width:230px;line-height:1.3;cursor:default}
 .node.c1{border-color:var(--acc);color:var(--acc-ink)}
 .node.c2{border-color:var(--ok);color:var(--ok)}
 .node.c3{border-color:var(--warn);color:var(--warn)}
@@ -256,7 +256,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
   </div>
 
   <div class="warnbox acc">
-    <b>Что здесь измерено, а что нет.</b> Контур К1 (задания) посчитан по журналу регистрации за 16.08–16.09.2026 и полной выгрузке расписаний 98 заданий. Контуры К2 (помеченные объекты) и К3 (клиенты) пока без данных: вместо цифр в них стоят карточки замеров с перечнем того, что нужно снять. Пустая шкала на пульте — это не ноль, а «не измерено».
+    <b>Что здесь измерено, а что нет.</b> Контур «Регламентные задания» посчитан по журналу регистрации за 16.08–16.09.2026 и полной выгрузке расписаний 98 заданий. Контуры «Помеченные на удаление» и «Толстый → тонкий клиент» пока без данных: вместо цифр в них стоят карточки замеров с перечнем того, что нужно снять. Пустая шкала на пульте — это не ноль, а «не измерено».
   </div>
 
   <!-- ══ РЕСУРСЫ ══ -->
@@ -279,13 +279,13 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
         <div class="rt"><b>Объём базы и мусор</b><span class="tag t-none">не измерено</span></div>
         <div class="rv unk">— <small>нет данных</small></div>
         <div class="gauge empty"></div>
-        <div class="rn">Неизвестны: размер базы, топ таблиц, число помеченных на удаление объектов, дата последнего успешного УПО. Замер <b>З-2</b>.</div>
+        <div class="rn">Неизвестны: размер базы, топ таблиц, число помеченных на удаление объектов, дата последнего успешного УПО. Замер «Объём базы и помеченные объекты».</div>
       </div>
       <div>
         <div class="rt"><b>Клиентские сеансы</b><span class="tag t-none">не измерено</span></div>
         <div class="rv unk">— <small>нет данных</small></div>
         <div class="gauge empty"></div>
-        <div class="rn">Неизвестны: число сеансов по типу клиента, пиковая одновременность, время открытия форм. Замер <b>З-3</b>.</div>
+        <div class="rn">Неизвестны: число сеансов по типу клиента, пиковая одновременность, время открытия форм. Замер «Клиенты и сеансы».</div>
       </div>
     </div>
   </section>
@@ -294,12 +294,12 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
   <section class="block" id="kont">
     <h2>Контуры работ <em>у каждого свой инструмент и своя единица измерения</em></h2>
     <div class="tabs" role="tablist">
-      <button role="tab" id="t1" aria-controls="p1" aria-selected="true"><span class="k">К1</span><span class="n">Регламентные задания</span><span class="s">измерено · 819,7 ч за 32 дня</span></button>
-      <button role="tab" id="t2" aria-controls="p2" aria-selected="false"><span class="k">К2</span><span class="n">Помеченные на удаление</span><span class="s">обследование не начато</span></button>
-      <button role="tab" id="t3" aria-controls="p3" aria-selected="false"><span class="k">К3</span><span class="n">Толстый → тонкий клиент</span><span class="s">упирается в тип форм</span></button>
+      <button role="tab" id="t1" aria-controls="p1" aria-selected="true"><span class="n">Регламентные задания</span><span class="s">измерено · 819,7 ч за 32 дня</span></button>
+      <button role="tab" id="t2" aria-controls="p2" aria-selected="false"><span class="n">Помеченные на удаление</span><span class="s">обследование не начато</span></button>
+      <button role="tab" id="t3" aria-controls="p3" aria-selected="false"><span class="n">Толстый → тонкий клиент</span><span class="s">упирается в тип форм</span></button>
     </div>
 
-    <!-- ── К1 ── -->
+    <!-- ── Регламентные задания ── -->
     <div class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
       <div class="pgrid">
         <div class="main">
@@ -346,13 +346,13 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
       </div>
     </div>
 
-    <!-- ── К2 ── -->
+    <!-- ── Помеченные на удаление ── -->
     <div class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
       <div class="pgrid">
         <div class="main">
           <p style="margin-bottom:14px">Удаление помеченных объектов — операция, которая читает всю базу на поиск ссылок и монопольно блокирует её на время выполнения. Значит, это не «включить и забыть», а работа, которой нужно окно и оценка длительности. Ни того, ни другого без замера назначить нельзя, поэтому контур начинается с обследования.</p>
 
-          <h3 style="font-size:15px;margin-bottom:8px">Карточка замера З-2 — что снять с базы</h3>
+          <h3 style="font-size:15px;margin-bottom:8px">Карточка замера «Объём базы и помеченные объекты» — что снять с базы</h3>
           <div class="tw" style="border:1px solid var(--rule)">
             <table>
               <thead><tr><th>Показатель</th><th>Откуда берётся</th><th>Зачем нужен</th><th style="text-align:right">Значение</th></tr></thead>
@@ -370,20 +370,20 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
             </table>
           </div>
 
-          <h3 style="font-size:15px;margin:18px 0 8px">Чем этот контур упирается в К1</h3>
-          <div class="warnbox">Окно для УПО — только вне рабочего времени. Ночь занята: <code>resanopt_goods_full</code> идёт с 22:00 по 6–9 часов, Диадок с 21:30, sanmixpro с 22:00. Плотность ночи 1,14 против 0,98 днём. Значит, окно под удаление помеченных объектов появится не раньше, чем будет пересобрана ночь (задача <b>К1-9</b>), либо его придётся брать в выходные.</div>
+          <h3 style="font-size:15px;margin:18px 0 8px">Чем этот контур упирается в задания</h3>
+          <div class="warnbox">Окно для УПО — только вне рабочего времени. Ночь занята: <code>resanopt_goods_full</code> идёт с 22:00 по 6–9 часов, Диадок с 21:30, sanmixpro с 22:00. Плотность ночи 1,14 против 0,98 днём. Значит, окно под удаление помеченных объектов появится не раньше, чем будет пересобрана ночь (работа «Пересборка ночного окна»), либо его придётся брать в выходные.</div>
 
           <h3 style="font-size:15px;margin:18px 0 8px">Порядок работ контура</h3>
           <div class="tw" style="border:1px solid var(--rule)">
             <table>
-              <thead><tr><th>№</th><th>Шаг</th><th>Условие перехода к следующему</th></tr></thead>
+              <thead><tr><th>Шаг</th><th>Условие перехода к следующему</th></tr></thead>
               <tbody>
-                <tr><td class="k">К2-1</td><td>Снять замер по карточке З-2</td><td class="sm">Все девять строк заполнены</td></tr>
-                <tr><td class="k">К2-2</td><td>Решить, даёт ли УПО эффект: сравнить объём помеченных объектов с топом таблиц</td><td class="sm">Если мусор в журнале регистрации или регистрах — контур меняет предмет, а не продолжается по инерции</td></tr>
-                <tr><td class="k">К2-3</td><td>Прогон УПО на копии базы с замером длительности</td><td class="sm">Известна длительность и список объектов, которые нельзя удалить из-за ссылок</td></tr>
-                <tr><td class="k">К2-4</td><td>Разбор конфликтов ссылок с владельцами данных</td><td class="sm">По каждому объекту решено: снять пометку, перенаправить ссылку или оставить</td></tr>
-                <tr><td class="k">К2-5</td><td>Первый прогон в рабочей базе в согласованном окне</td><td class="sm">Есть свежая резервная копия и подтверждённое окно</td></tr>
-                <tr><td class="k">К2-6</td><td>Регламент: периодичность, окно, ответственный, реиндексация после</td><td class="sm">Регламент записан и поставлен в расписание</td></tr>
+                <tr><td><b>Замер объёма базы и помеченных объектов</b></td><td class="sm">Все девять строк карточки заполнены</td></tr>
+                <tr><td><b>Решить, даёт ли УПО эффект</b><div class="sm">Сравнить объём помеченных объектов с топом таблиц</div></td><td class="sm">Если мусор в журнале регистрации или регистрах — контур меняет предмет, а не продолжается по инерции</td></tr>
+                <tr><td><b>Прогон удаления на копии базы с замером длительности</b></td><td class="sm">Известна длительность и список объектов, которые нельзя удалить из-за ссылок</td></tr>
+                <tr><td><b>Разбор конфликтов ссылок с владельцами данных</b></td><td class="sm">По каждому объекту решено: снять пометку, перенаправить ссылку или оставить</td></tr>
+                <tr><td><b>Первый прогон в рабочей базе в согласованном окне</b></td><td class="sm">Есть свежая резервная копия и подтверждённое окно</td></tr>
+                <tr><td><b>Регламент: периодичность, окно, ответственный, реиндексация после</b></td><td class="sm">Регламент записан и поставлен в расписание</td></tr>
               </tbody>
             </table>
           </div>
@@ -400,20 +400,20 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
           <div>
             <h4 style="color:var(--bad)">Неизвестно</h4>
             <ul class="miss">
-              <li>Весь замер З-2 — девять показателей</li>
+              <li>Весь замер «Объём базы и помеченные объекты» — девять показателей</li>
               <li>Выполнялось ли УПО когда-либо</li>
               <li>Есть ли копия базы для прогона</li>
             </ul>
           </div>
           <div>
             <h4>Оговорка</h4>
-            <p class="sm">Распространённое заблуждение: «удалим помеченные — база похудеет». Часто основной объём дают журнал регистрации, регистры сведений и таблицы итогов, а не помеченные объекты. Поэтому шаг К2-2 — точка, где контур может законно закончиться.</p>
+            <p class="sm">Распространённое заблуждение: «удалим помеченные — база похудеет». Часто основной объём дают журнал регистрации, регистры сведений и таблицы итогов, а не помеченные объекты. Поэтому шаг «Решить, даёт ли УПО эффект» — точка, где контур может законно закончиться.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ── К3 ── -->
+    <!-- ── Толстый → тонкий клиент ── -->
     <div class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
       <div class="pgrid">
         <div class="main">
@@ -433,7 +433,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
             </table>
           </div>
 
-          <h3 style="font-size:15px;margin:18px 0 8px">Карточка замера З-3 — что снять до любых решений</h3>
+          <h3 style="font-size:15px;margin:18px 0 8px">Карточка замера «Клиенты и сеансы» — что снять до любых решений</h3>
           <div class="tw" style="border:1px solid var(--rule)">
             <table>
               <thead><tr><th>Показатель</th><th>Откуда берётся</th><th>Зачем нужен</th><th style="text-align:right">Значение</th></tr></thead>
@@ -444,12 +444,12 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
                 <tr><td>Пиковая одновременность сеансов</td><td class="sm">Там же, в течение недели</td><td class="sm">Нагрузка на кластер и лицензии</td><td class="r dim">—</td></tr>
                 <tr><td>Способ подключения рабочих мест</td><td class="sm">Опрос подразделений</td><td class="sm">Локальная сеть, VPN или терминал — от этого зависит, в чём проблема</td><td class="r dim">—</td></tr>
                 <tr><td>Время открытия тяжёлых форм</td><td class="sm">Секундомер на 3–5 типовых операциях</td><td class="sm">Единственная метрика, которую заметят пользователи</td><td class="r dim">—</td></tr>
-                <tr><td>Жалобы: какие формы и в какое время</td><td class="sm">Опрос пользователей</td><td class="sm">Сверить с картой суток К1: совпадают ли пики с дневными выгрузками</td><td class="r dim">—</td></tr>
+                <tr><td>Жалобы: какие формы и в какое время</td><td class="sm">Опрос пользователей</td><td class="sm">Сверить с картой суток: совпадают ли пики с дневными выгрузками</td><td class="r dim">—</td></tr>
               </tbody>
             </table>
           </div>
 
-          <div class="warnbox acc" style="margin-top:16px">Последняя строка — самая ценная. Если жалобы на «зависания» приходятся на часы, где карта суток показывает полную выгрузку каталога, то причина в контуре К1, и перевод клиентов её не вылечит. Аудит и начался с жалоб на зависания — эту связь стоит проверить прежде, чем планировать работу с клиентами.</div>
+          <div class="warnbox acc" style="margin-top:16px">Последняя строка — самая ценная. Если жалобы на «зависания» приходятся на часы, где карта суток показывает полную выгрузку каталога, то причина в контуре «Регламентные задания», и перевод клиентов её не вылечит. Аудит и начался с жалоб на зависания — эту связь стоит проверить прежде, чем планировать работу с клиентами.</div>
         </div>
         <div class="side">
           <div>
@@ -467,7 +467,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
             <h4 style="color:var(--bad)">Неизвестно</h4>
             <ul class="miss">
               <li>Режим запуска конфигурации — ключевой вопрос контура</li>
-              <li>Весь замер З-3</li>
+              <li>Весь замер «Клиенты и сеансы»</li>
               <li>Совпадают ли пики жалоб с пиками карты суток</li>
             </ul>
           </div>
@@ -488,33 +488,32 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
         <button type="button" data-f="all" aria-pressed="true">Все</button>
         <button type="button" data-f="go" aria-pressed="false">Можно делать сейчас</button>
         <button type="button" data-f="wait" aria-pressed="false">Ждёт данных или ответа</button>
-        <button type="button" data-f="k1" aria-pressed="false">К1 задания</button>
-        <button type="button" data-f="k2" aria-pressed="false">К2 объём</button>
-        <button type="button" data-f="k3" aria-pressed="false">К3 клиенты</button>
-        <span class="sm" style="margin-left:6px"><b id="fc">18</b> строк</span>
+        <button type="button" data-f="jobs" aria-pressed="false">Задания</button>
+        <button type="button" data-f="vol" aria-pressed="false">Объём базы</button>
+        <button type="button" data-f="cli" aria-pressed="false">Клиенты</button>
+        <span class="sm" style="margin-left:6px"><b id="fc">17</b> строк</span>
       </div>
       <div class="tw" style="border:1px solid var(--rule)">
         <table id="q">
-          <thead><tr><th>№</th><th>Работа</th><th style="text-align:right">Эффект<br>ч/сут в окне</th><th>Усилие</th><th>Готовность</th></tr></thead>
+          <thead><tr><th>Работа</th><th style="text-align:right">Эффект<br>ч/сут в окне</th><th>Усилие</th><th>Готовность</th></tr></thead>
           <tbody>
-            <tr data-g="k1 go"><td class="k">К1-0</td><td><b>Замерить ожидания на управляемых блокировках</b><div class="sm">Базовая линия до любых правок. Без неё результат проекта нечем подтвердить</div></td><td class="r dim">база</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-acc">делать первым</span></td></tr>
-            <tr data-g="k1 wait"><td class="k">К1-1</td><td><b>Битрикс: дневную серию обрезать по 14:00</b><div class="sm">Уходит старт 17:30. <code>9:10–19:00 / 10 000 с</code> → <code>9:00–14:00 / 10 000 с</code></div></td><td class="r">2,02</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-warn">ждёт В-1</span></td></tr>
-            <tr data-g="k1 wait"><td class="k">К1-2</td><td><b>Остатки: разрядить интервал в окне до 600 с</b><div class="sm">Сейчас 180 с круглосуточно без окна</div></td><td class="r">0,82</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-warn">ждёт В-2</span></td></tr>
-            <tr data-g="k1 go"><td class="k">К1-3</td><td><b>revitech_goods_full: старт 20:00 → 22:30</b><div class="sm">Самая дешёвая правка списка, бизнес-вопросов нет</div></td><td class="r">0,75</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-ok">готово</span></td></tr>
-            <tr data-g="k1 go"><td class="k">К1-4</td><td><b>ВМС: 20 с → 120 с</b><div class="sm">70,3 % всех запусков базы при 4,9 % машинного времени</div></td><td class="r">0,30</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-ok">готово</span></td></tr>
-            <tr data-g="k1 wait"><td class="k">К1-5</td><td><b>Insales: дневную серию обрезать по 14:00</b></td><td class="r">0,24</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-warn">ждёт В-1</span></td></tr>
-            <tr data-g="k1 go"><td class="k">К1-6</td><td><b>revitech_prices_change: окно до 15:00</b><div class="sm">Сейчас мелочь, на проектном объёме перекроет день</div></td><td class="r">0,13</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-ok">готово</span></td></tr>
-            <tr data-g="k1 go"><td class="k">К1-7</td><td><b>Закрыть «зомби» и тип «один день»</b><div class="sm">goods_pictures, goods_change и четыре задания с нерабочим типом расписания</div></td><td class="r dim">риск</td><td><span class="bars"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="tag t-acc">блокер окна</span></td></tr>
-            <tr data-g="k1 go"><td class="k">К1-8</td><td><b>Задать ограничение длительности тяжёлым заданиям</b><div class="sm">Сейчас его нет ни у одного; функцию таймаута выполняет администратор вручную</div></td><td class="r dim">риск</td><td><span class="bars"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="tag t-acc">блокер окна</span></td></tr>
-            <tr data-g="k1 wait"><td class="k">К1-9</td><td><b>Пересобрать ночное окно</b><div class="sm">Развести старты 21:30 / 22:00 / 22:30; освободить место под К2-5</div></td><td class="r dim">ночь</td><td><span class="bars"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="tag t-warn">после К1-3</span></td></tr>
-            <tr data-g="k1 wait"><td class="k">К1-10</td><td><b>resanopt_goods_full на инкрементальную выгрузку</b><div class="sm">212,4 ч за 32 дня — крупнейший резерв базы; 6–9 ч на прогон</div></td><td class="r dim">ночь</td><td><span class="bars"><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="tag t-warn">ждёт В-4</span></td></tr>
-            <tr data-g="k1 wait"><td class="k">К1-11</td><td><b>Битрикс и Insales на дельта-обмен</b><div class="sm">Снимает компромисс по частоте актуализации, принятый в К1-1 и К1-5</div></td><td class="r dim">резерв</td><td><span class="bars"><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="tag t-warn">ждёт В-5</span></td></tr>
-            <tr data-g="k1 go"><td class="k">К1-12</td><td><b>Разобрать ошибку Диадока и два задания со 100 % и 66 % ошибок</b></td><td class="r dim">стабильность</td><td><span class="bars"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="tag t-ok">готово</span></td></tr>
-            <tr data-g="k1 go"><td class="k">К1-13</td><td><b>Удалить 43 мёртвых задания, назначить владельцев 47 бесхозным</b></td><td class="r dim">порядок</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-ok">готово</span></td></tr>
-            <tr data-g="k2 go"><td class="k">К2-1</td><td><b>Снять замер З-2 по объёму и помеченным объектам</b><div class="sm">Девять показателей; без них контур К2 не существует</div></td><td class="r dim">замер</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-acc">делать первым</span></td></tr>
-            <tr data-g="k2 wait"><td class="k">К2-3</td><td><b>Прогон УПО на копии базы с замером длительности</b></td><td class="r dim">замер</td><td><span class="bars"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="tag t-warn">ждёт К2-1, В-6</span></td></tr>
-            <tr data-g="k3 go"><td class="k">К3-1</td><td><b>Выяснить основной режим запуска конфигурации</b><div class="sm">Обычное или управляемое приложение. Одна проверка в конфигураторе, решает судьбу всего контура</div></td><td class="r dim">развилка</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-acc">делать первым</span></td></tr>
-            <tr data-g="k3 go"><td class="k">К3-2</td><td><b>Сверить часы жалоб пользователей с картой суток</b><div class="sm">Если пики совпадают с дневными выгрузками — лечится контуром К1, а не клиентами</div></td><td class="r dim">диагноз</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-acc">делать первым</span></td></tr>
+            <tr data-g="jobs go"><td><b>Замерить ожидания на управляемых блокировках</b><div class="sm">Базовая линия до любых правок. Без неё результат проекта нечем подтвердить</div></td><td class="r dim">база</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-acc">делать первым</span></td></tr>
+            <tr data-g="jobs wait"><td><b>Битрикс: дневную серию обрезать по 14:00</b><div class="sm">Уходит старт 17:30. <code>9:10–19:00 / 10 000 с</code> → <code>9:00–14:00 / 10 000 с</code></div></td><td class="r">2,02</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-warn">ждёт ответа по каталогу</span></td></tr>
+            <tr data-g="jobs wait"><td><b>Остатки: разрядить интервал в окне до 600 с</b><div class="sm">Сейчас 180 с круглосуточно без окна</div></td><td class="r">0,82</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-warn">ждёт ответа по остаткам</span></td></tr>
+            <tr data-g="jobs go"><td><b>revitech_goods_full: старт 20:00 → 22:30</b><div class="sm">Самая дешёвая правка списка, бизнес-вопросов нет</div></td><td class="r">0,75</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-ok">готово</span></td></tr>
+            <tr data-g="jobs wait"><td><b>Insales: дневную серию обрезать по 14:00</b></td><td class="r">0,24</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-warn">ждёт ответа по каталогу</span></td></tr>
+            <tr data-g="jobs go"><td><b>revitech_prices_change: окно до 15:00</b><div class="sm">Сейчас мелочь, на проектном объёме перекроет день</div></td><td class="r">0,13</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-ok">готово</span></td></tr>
+            <tr data-g="jobs go"><td><b>Закрыть «зомби» и тип «один день»</b><div class="sm">goods_pictures, goods_change и четыре задания с нерабочим типом расписания</div></td><td class="r dim">риск</td><td><span class="bars"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="tag t-acc">блокер окна</span></td></tr>
+            <tr data-g="jobs go"><td><b>Задать ограничение длительности тяжёлым заданиям</b><div class="sm">Сейчас его нет ни у одного; функцию таймаута выполняет администратор вручную</div></td><td class="r dim">риск</td><td><span class="bars"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="tag t-acc">блокер окна</span></td></tr>
+            <tr data-g="jobs wait"><td><b>Пересобрать ночное окно</b><div class="sm">Развести старты 21:30 / 22:00 / 22:30; освободить место под первый прогон удаления помеченных объектов</div></td><td class="r dim">ночь</td><td><span class="bars"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="tag t-warn">после переноса revitech_goods_full</span></td></tr>
+            <tr data-g="jobs wait"><td><b>resanopt_goods_full на инкрементальную выгрузку</b><div class="sm">212,4 ч за 32 дня — крупнейший резерв базы; 6–9 ч на прогон</div></td><td class="r dim">ночь</td><td><span class="bars"><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="tag t-warn">ждёт разбора выгрузки каталога</span></td></tr>
+            <tr data-g="jobs wait"><td><b>Битрикс и Insales на дельта-обмен</b><div class="sm">Снимает компромисс по частоте актуализации, принятый при обрезке дневных серий</div></td><td class="r dim">резерв</td><td><span class="bars"><i class="on"></i><i class="on"></i><i class="on"></i></span></td><td><span class="tag t-warn">ждёт состава выгрузок</span></td></tr>
+            <tr data-g="jobs go"><td><b>Разобрать ошибку Диадока и два задания со 100 % и 66 % ошибок</b></td><td class="r dim">стабильность</td><td><span class="bars"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="tag t-ok">готово</span></td></tr>
+            <tr data-g="jobs go"><td><b>Удалить 43 мёртвых задания, назначить владельцев 47 бесхозным</b></td><td class="r dim">порядок</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-ok">готово</span></td></tr>
+            <tr data-g="vol go"><td><b>Снять замер объёма базы и помеченных объектов</b><div class="sm">Девять показателей; без них контур не существует</div></td><td class="r dim">замер</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-acc">делать первым</span></td></tr>
+            <tr data-g="vol wait"><td><b>Прогон удаления на копии базы с замером длительности</b></td><td class="r dim">замер</td><td><span class="bars"><i class="on"></i><i class="on"></i><i></i></span></td><td><span class="tag t-warn">ждёт замера и копии базы</span></td></tr>
+            <tr data-g="cli go"><td><b>Выяснить основной режим запуска конфигурации</b><div class="sm">Обычное или управляемое приложение. Одна проверка в конфигураторе, решает судьбу всего контура</div></td><td class="r dim">развилка</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-acc">делать первым</span></td></tr>
+            <tr data-g="cli go"><td><b>Сверить часы жалоб пользователей с картой суток</b><div class="sm">Если пики совпадают с дневными выгрузками — лечится расписаниями заданий, а не клиентами</div></td><td class="r dim">диагноз</td><td><span class="bars"><i class="on"></i><i></i><i></i></span></td><td><span class="tag t-acc">делать первым</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -526,34 +525,33 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
         <div class="ch ch1">низкое усилие</div>
         <div class="ch ch2">высокое усилие</div>
         <div class="q q1 hot"><span class="qt">делать сейчас</span>
-          <span class="node c1" title="Битрикс: обрезать дневную серию">К1-1</span>
-          <span class="node c1" title="Остатки: разрядить интервал">К1-2</span>
-          <span class="node c1" title="revitech_goods_full: перенос старта">К1-3</span>
-          <span class="node c1" title="ВМС: 20 с → 120 с">К1-4</span>
-          <span class="node c1" title="Базовый замер блокировок">К1-0</span>
-          <span class="node c3" title="Режим запуска конфигурации">К3-1</span>
-          <span class="node c3" title="Сверка часов жалоб с картой суток">К3-2</span>
-          <span class="node c2" title="Замер объёма и помеченных объектов">К2-1</span>
+          <span class="node c1">Битрикс: серия до 14:00</span>
+          <span class="node c1">Остатки: разрядить в окне</span>
+          <span class="node c1">revitech_goods_full на 22:30</span>
+          <span class="node c1">Базовый замер блокировок</span>
+          <span class="node c3">Режим запуска конфигурации</span>
+          <span class="node c3">Сверка жалоб с картой суток</span>
+          <span class="node c2">Замер объёма и помеченных</span>
         </div>
         <div class="q q2"><span class="qt">планировать</span>
-          <span class="node c1" title="resanopt_goods_full на инкремент">К1-10</span>
-          <span class="node c1" title="Дельта-обмен каталога">К1-11</span>
-          <span class="node c1" title="Пересборка ночного окна">К1-9</span>
+          <span class="node c1">resanopt_goods_full на инкремент</span>
+          <span class="node c1">Дельта-обмен каталога</span>
+          <span class="node c1">Пересборка ночного окна</span>
         </div>
         <div class="q q3"><span class="qt">делать попутно</span>
-          <span class="node c1" title="Insales: обрезать дневную серию">К1-5</span>
-          <span class="node c1" title="revitech_prices_change: окно до 15:00">К1-6</span>
-          <span class="node c1" title="Ограничение длительности">К1-8</span>
-          <span class="node c1" title="Закрыть зомби и тип «один день»">К1-7</span>
-          <span class="node c1" title="Чистка реестра заданий">К1-13</span>
+          <span class="node c1">Insales: серия до 14:00</span>
+          <span class="node c1">revitech_prices_change до 15:00</span>
+          <span class="node c1">Ограничение длительности</span>
+          <span class="node c1">Закрыть «зомби» и «один день»</span>
+          <span class="node c1">Чистка реестра заданий</span>
         </div>
         <div class="q q4"><span class="qt">не сейчас</span>
-          <span class="node c1" title="Разбор ошибок Диадока и проблемных заданий">К1-12</span>
-          <span class="node c2 blocked" title="Прогон УПО на копии базы">К2-3</span>
+          <span class="node c1">Ошибки Диадока и проблемных заданий</span>
+          <span class="node c2 blocked">Прогон удаления на копии базы</span>
         </div>
         <div class="xax">усилие →</div>
       </div>
-      <p class="sm" style="margin-top:10px">Пунктиром — работы, заблокированные отсутствием данных. Цвет рамки — контур: <span class="node c1" style="padding:1px 5px">К1</span> <span class="node c2" style="padding:1px 5px">К2</span> <span class="node c3" style="padding:1px 5px">К3</span></p>
+      <p class="sm" style="margin-top:10px">Пунктиром — работы, заблокированные отсутствием данных. Цвет рамки — контур: <span class="node c1" style="padding:1px 5px">задания</span> <span class="node c2" style="padding:1px 5px">объём базы</span> <span class="node c3" style="padding:1px 5px">клиенты</span></p>
     </div>
   </section>
 
@@ -565,15 +563,15 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
         <table>
           <thead><tr><th>Дата</th><th>Метрика</th><th style="text-align:right">Значение</th><th>Событие</th><th>Контур</th></tr></thead>
           <tbody>
-            <tr><td class="m">16.08–16.09</td><td>Машинное время базы за 32 дня</td><td class="r">819,7 ч</td><td class="sm">Журнал регистрации, исходный аудит</td><td class="k">К1</td></tr>
-            <tr><td class="m">16.08–16.09</td><td>Запусков фоновых заданий в сутки</td><td class="r">≈ 6 033</td><td class="sm">Там же</td><td class="k">К1</td></tr>
-            <tr><td class="m">21.09</td><td>Машинное время в окне 15:00–21:00</td><td class="r">5,5 ч/сут</td><td class="sm">Расчёт по расписаниям 98 заданий</td><td class="k">К1</td></tr>
-            <tr><td class="m">21.09</td><td>Плотность окна 15:00–21:00</td><td class="r">0,92 ч/ч</td><td class="sm">Там же</td><td class="k">К1</td></tr>
-            <tr><td class="m">21.09</td><td>Плотность ночи 21:00–9:00</td><td class="r">1,14 ч/ч</td><td class="sm">Там же</td><td class="k">К1</td></tr>
-            <tr><td class="m">—</td><td>Ожидания на управляемых блокировках в окне</td><td class="r dim">не замерялось</td><td class="sm">Замер К1-0, до правок расписаний</td><td class="k">К1</td></tr>
-            <tr><td class="m">—</td><td>Время открытия тяжёлых форм</td><td class="r dim">не замерялось</td><td class="sm">Замер З-3</td><td class="k">К3</td></tr>
-            <tr><td class="m">—</td><td>Размер базы</td><td class="r dim">не замерялось</td><td class="sm">Замер З-2</td><td class="k">К2</td></tr>
-            <tr><td class="m">—</td><td>Помечено на удаление объектов</td><td class="r dim">не замерялось</td><td class="sm">Замер З-2</td><td class="k">К2</td></tr>
+            <tr><td class="m">16.08–16.09</td><td>Машинное время базы за 32 дня</td><td class="r">819,7 ч</td><td class="sm">Журнал регистрации, исходный аудит</td><td class="sm">Задания</td></tr>
+            <tr><td class="m">16.08–16.09</td><td>Запусков фоновых заданий в сутки</td><td class="r">≈ 6 033</td><td class="sm">Там же</td><td class="sm">Задания</td></tr>
+            <tr><td class="m">21.09</td><td>Машинное время в окне 15:00–21:00</td><td class="r">5,5 ч/сут</td><td class="sm">Расчёт по расписаниям 98 заданий</td><td class="sm">Задания</td></tr>
+            <tr><td class="m">21.09</td><td>Плотность окна 15:00–21:00</td><td class="r">0,92 ч/ч</td><td class="sm">Там же</td><td class="sm">Задания</td></tr>
+            <tr><td class="m">21.09</td><td>Плотность ночи 21:00–9:00</td><td class="r">1,14 ч/ч</td><td class="sm">Там же</td><td class="sm">Задания</td></tr>
+            <tr><td class="m">—</td><td>Ожидания на управляемых блокировках в окне</td><td class="r dim">не замерялось</td><td class="sm">Базовый замер, до правок расписаний</td><td class="sm">Задания</td></tr>
+            <tr><td class="m">—</td><td>Время открытия тяжёлых форм</td><td class="r dim">не замерялось</td><td class="sm">Замер «Клиенты и сеансы»</td><td class="sm">Клиенты</td></tr>
+            <tr><td class="m">—</td><td>Размер базы</td><td class="r dim">не замерялось</td><td class="sm">Замер «Объём базы и помеченные объекты»</td><td class="sm">Объём базы</td></tr>
+            <tr><td class="m">—</td><td>Помечено на удаление объектов</td><td class="r dim">не замерялось</td><td class="sm">Замер «Объём базы и помеченные объекты»</td><td class="sm">Объём базы</td></tr>
           </tbody>
         </table>
       </div>
@@ -587,16 +585,16 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
     <div class="pad">
       <div class="tw" style="border:1px solid var(--rule)">
         <table>
-          <thead><tr><th>№</th><th>Вопрос</th><th>Держит</th><th>Кому</th></tr></thead>
+          <thead><tr><th>Вопрос</th><th>Держит работу</th><th>Кому</th></tr></thead>
           <tbody>
-            <tr><td class="k">В-1</td><td>Какая задержка актуализации каталога на сайтах допустима? Известно ли, что выгрузка идёт полным каталогом днём каждые 2 ч 46 мин — это решение или наследие настройки?</td><td class="k">К1-1, К1-5</td><td class="sm">Бизнес</td></tr>
-            <tr><td class="k">В-2</td><td>Какая задержка допустима по остаткам? Круглосуточные 180 секунд — требование или настройка по умолчанию?</td><td class="k">К1-2</td><td class="sm">Бизнес</td></tr>
-            <tr><td class="k">В-3</td><td>Профиль нового регламентного задания: длительность прогона, периодичность, какие объекты пишет, жёсткие ли границы окна</td><td class="k">весь К1</td><td class="sm">Заказчик доработки</td></tr>
-            <tr><td class="k">В-4</td><td>Почему полная выгрузка каталога идёт 6–9 часов и возможна ли инкрементальная? Кто и зачем обрывает её сеанс вручную?</td><td class="k">К1-10</td><td class="sm">Разработчик обменов</td></tr>
-            <tr><td class="k">В-5</td><td>Что за массивы данных выгружаются на Битрикс, Insales и дилерам и куда они направлены?</td><td class="k">К1-11</td><td class="sm">Разработчик обменов</td></tr>
-            <tr><td class="k">В-6</td><td>Есть ли актуальная копия рабочей базы для прогонов и проверок?</td><td class="k">К2-3, К1-10</td><td class="sm">Администратор 1С</td></tr>
-            <tr><td class="k">В-7</td><td>Что означает «перевести пользователей на тонкий клиент»: сменить тип клиента или ускорить работу пользователей? От ответа зависит предмет контура К3</td><td class="k">весь К3</td><td class="sm">Инициатор задачи</td></tr>
-            <tr><td class="k">В-8</td><td>Кто владельцы 47 заданий без владельца? Три активных обмена работают на учётной записи подрядчика</td><td class="k">К1-13</td><td class="sm">Руководство</td></tr>
+            <tr><td>Какая задержка актуализации каталога на сайтах допустима? Известно ли, что выгрузка идёт полным каталогом днём каждые 2 ч 46 мин — это решение или наследие настройки?</td><td class="sm">«Битрикс: серия до 14:00», «Insales: серия до 14:00»</td><td class="sm">Бизнес</td></tr>
+            <tr><td>Какая задержка допустима по остаткам? Круглосуточные 180 секунд — требование или настройка по умолчанию?</td><td class="sm">«Остатки: разрядить в окне»</td><td class="sm">Бизнес</td></tr>
+            <tr><td>Профиль нового регламентного задания: длительность прогона, периодичность, какие объекты пишет, жёсткие ли границы окна</td><td class="sm">весь контур «Регламентные задания»</td><td class="sm">Заказчик доработки</td></tr>
+            <tr><td>Почему полная выгрузка каталога идёт 6–9 часов и возможна ли инкрементальная? Кто и зачем обрывает её сеанс вручную?</td><td class="sm">«resanopt_goods_full на инкремент»</td><td class="sm">Разработчик обменов</td></tr>
+            <tr><td>Что за массивы данных выгружаются на Битрикс, Insales и дилерам и куда они направлены?</td><td class="sm">«Дельта-обмен каталога»</td><td class="sm">Разработчик обменов</td></tr>
+            <tr><td>Есть ли актуальная копия рабочей базы для прогонов и проверок?</td><td class="sm">«Прогон удаления на копии базы», «resanopt_goods_full на инкремент»</td><td class="sm">Администратор 1С</td></tr>
+            <tr><td>Что означает «перевести пользователей на тонкий клиент»: сменить тип клиента или ускорить работу пользователей? От ответа зависит предмет контура</td><td class="sm">весь контур «Толстый → тонкий клиент»</td><td class="sm">Инициатор задачи</td></tr>
+            <tr><td>Кто владельцы 47 заданий без владельца? Три активных обмена работают на учётной записи подрядчика</td><td class="sm">«Чистка реестра заданий»</td><td class="sm">Руководство</td></tr>
           </tbody>
         </table>
       </div>
@@ -608,8 +606,8 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
     <h2>Лента проекта <em>решения, находки и изменения документа одной хронологией</em></h2>
     <div class="pad">
       <div class="feed">
-        <div class="fitem"><span class="fd">28.09.2026</span><span class="fb"><b>Документ пересобран под три контура</b><p>Первая версия повторяла структуру проекта по бухгалтерии. Переделан под предмет: ресурсы базы, контуры со своим инструментом у каждого, общая очередь, журнал замеров. Контуры К2 и К3 добавлены без данных, с карточками замеров вместо цифр.</p></span></div>
-        <div class="fitem"><span class="fd">28.09.2026</span><span class="fb"><b>Найдена развилка в контуре К3</b><p>Тонкий клиент работает только с управляемыми формами. Если конфигурация на обычных формах, перевод невозможен без замены конфигурации, и контур меняет предмет. Проверка — одна операция в конфигураторе (К3-1).</p></span></div>
+        <div class="fitem"><span class="fd">28.09.2026</span><span class="fb"><b>Документ пересобран под три контура</b><p>Первая версия повторяла структуру проекта по бухгалтерии. Переделан под предмет: ресурсы базы, контуры со своим инструментом у каждого, общая очередь, журнал замеров. Контуры «Помеченные на удаление» и «Толстый → тонкий клиент» добавлены без данных, с карточками замеров вместо цифр.</p></span></div>
+        <div class="fitem"><span class="fd">28.09.2026</span><span class="fb"><b>Найдена развилка в контуре «Толстый → тонкий клиент»</b><p>Тонкий клиент работает только с управляемыми формами. Если конфигурация на обычных формах, перевод невозможен без замены конфигурации, и контур меняет предмет. Проверка — одна операция в конфигураторе, работа «Режим запуска конфигурации».</p></span></div>
         <div class="fitem"><span class="fd">28.09.2026</span><span class="fb"><b>Решено: приоритет по вкладу в окно, а не по общему машинному времени</b><p>resanopt_goods_full даёт четверть нагрузки базы, но в рабочее окно не попадает. Ускорение рабочего дня достигается работой с дневными сериями выгрузок каталога.</p></span></div>
         <div class="fitem"><span class="fd">28.09.2026</span><span class="fb"><b>Решено: ночь не считать резервом</b><p>Плотность 1,14 против 0,98 днём. Перенос заданий в ночь и окно под удаление помеченных объектов конкурируют за одно и то же место.</p></span></div>
         <div class="fitem"><span class="fd">21.09.2026</span><span class="fb"><b>Получена выгрузка расписаний всех 98 заданий</b><p>Позволила разложить машинное время по часам суток расчётом вместо оценки. До этого считалось, что главная дневная проблема — ночная выгрузка каталога, которая доживает до прихода людей; расписание это не подтвердило.</p></span></div>
@@ -658,7 +656,7 @@ foot,footer{font-size:12px;color:var(--dim);display:grid;gap:4px}
     {n:'Выгрузка остатков на сайт', k:'каждые 180 с · окна нет',
      now:{cont:0.204}, aft:{cont:0.204, win:0.068}},
     {n:'Выгрузка данных в ВМС', k:'каждые 20 с · окна нет',
-     now:{cont:0.052}, aft:{cont:0.009}},
+     now:{cont:0.052}, aft:{cont:0.052}},
     {n:'Обмены заказами, буфер', k:'каждые 300–700 с',
      now:{cont:0.12}, aft:{cont:0.12}},
     {n:'revitech_prices_change', k:'ежечасно 7:00–22:00',
