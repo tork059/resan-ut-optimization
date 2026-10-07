@@ -21,6 +21,7 @@
     "#q tbody",
     "#och .mx",
     "#meas tbody",
+    "#audit .pad",
     "#qa tbody",
     ".feed",
     "footer"
